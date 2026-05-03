@@ -41,6 +41,12 @@ BUFFER   (Días 22-23): Fixes críticos + final polish
 
 **Meta**: Infraestructura lista, design system generado, scope cerrado, decidir si Go/No-Go
 
+**STATUS SESIÓN 1 (3 de Mayo - Mañana)**:
+- ✅ Leer CLAUDE_CODE_GUIDE.md completamente
+- ✅ Completar contexto.md (3 preguntas esenciales) — **HECHO**: Usuario ideal (16-35 años, grupos/parejas/mochileros), monetización (15-30€/50 pegatinas), momento aha (memento mori + memento mundi)
+- ✅ Design System MASTER generado y comiteado
+- ⏳ PRÓXIMA SESIÓN: Crear repo Git + setup Vercel + Supabase
+
 | Hora | Tarea | Skill | Entregable | Riesgo |
 |------|-------|-------|-----------|--------|
 | 08:00-09:00 | Leer CLAUDE_CODE_GUIDE.md completamente | - | Entendimiento | Alto si no lo haces |
@@ -358,7 +364,8 @@ BUFFER   (Días 22-23): Fixes críticos + final polish
 | 08:00-10:00 | Última ronda de monitoring | - | Health check |
 | 10:00-12:00 | Recolectar testimonios/feedback | - | Quotes para landing |
 | 12:00-13:30 | Actualizar landing con testimonios reales | - | Landing mejorada |
-| 13:30-15:00 | Crear email de anuncio público | funnel-copy-architect | Announcement |
+| 13:30-14:30 | **Crear 3 guiones TikTok de lanzamiento** | **tiktok-marketing** | **3 guiones con hooks + sonidos + subtítulos** |
+| 14:30-15:00 | Crear email de anuncio público | funnel-copy-architect | Announcement |
 | 15:00-17:00 | Preparar para lanzamiento público | ship-it | Pre-launch checklist |
 
 **Horas**: 9 horas | **Status**: Listo para público
@@ -369,9 +376,11 @@ BUFFER   (Días 22-23): Fixes críticos + final polish
 
 | Hora | Tarea | Skill | Entregable |
 |------|-------|-------|-----------|
-| 08:00-12:00 | **LANZAMIENTO PÚBLICO**: Newsletter + Twitter + Product Hunt (opcional) | - | Public announcement |
-| 12:00-13:30 | Monitor en vivo: logs, errors, user signups | - | Live dashboard |
-| 13:30-16:00 | Responder a primeros usuarios | - | Support activo |
+| 08:00-09:30 | **LANZAMIENTO PÚBLICO**: Newsletter + Twitter + Product Hunt (opcional) | - | Public announcement |
+| 09:30-11:00 | **Publicar TikToks de lanzamiento** (guiones del Día 19) | tiktok-marketing | 2-3 vídeos publicados |
+| 11:00-12:30 | Monitor en vivo: logs, errors, user signups | - | Live dashboard |
+| 12:30-14:30 | Responder a primeros usuarios | - | Support activo |
+| 14:30-16:00 | **Analizar métricas TikTok + iterar contenido** | tiktok-marketing | Segundo batch de vídeos |
 | 16:00-17:30 | Documentar lecciones aprendidas | - | Post-launch notes |
 
 **Horas**: 9.5 horas | **Status**: 🎉 EN VIVO PÚBLICAMENTE
@@ -434,12 +443,14 @@ BUFFER   (Días 22-23): Fixes críticos + final polish
 
 ## 📋 Checklist maestro (Resumen)
 
-### **ANTES DE EMPEZAR (Día 1)**
-- [ ] Cuentas creadas: Vercel, Supabase, Stripe, Resend, GitHub
-- [ ] contexto.md completado con 3 preguntas esenciales
-- [ ] `/brand-identity-lab` ejecutado → brandbook.md + tokens.css
-- [ ] `/mvp-blueprint` ejecutado → tabla Moscow + roadmap
-- [ ] **Decisión Go/No-Go** tomada (¿es realista en 22 días?)
+### **ANTES DE EMPEZAR (Día 1) — STATUS ACTUAL**
+- [x] Cuentas creadas: Vercel, Supabase, Stripe, Resend *(usuario ya logueado)*
+- [ ] GitHub repo creado y linkedero a Vercel
+- [x] contexto.md completado con 3 preguntas esenciales *(3 Mayo - SESIÓN 1)*
+- [x] Design System MASTER generado y comiteado *(3 Mayo - SESIÓN 1)*
+- [ ] `/brand-identity-lab` ejecutado → brandbook.md + tokens.css *(PRÓXIMA SESIÓN)*
+- [ ] `/mvp-blueprint` ejecutado → tabla Moscow + roadmap *(PRÓXIMA SESIÓN)*
+- [ ] **Decisión Go/No-Go** tomada (¿es realista en 22 días?) *(PRÓXIMA SESIÓN)*
 
 ### **SEMANA 1: BRAND + LANDING (Días 1-7)**
 - [ ] Landing EN VIVO con formulario (Día 5)
@@ -566,6 +577,7 @@ Cada día, responde:
 | `customer-voice` | Días 18, 21 | 1h |
 | `ship-it` | Día 19 | 1.5h |
 | `automation-forge` | Día 4 (email) | 1h |
+| `tiktok-marketing` | Días 19-20 (lanzamiento) + cualquier momento que se necesite contenido viral | 1-2h por sesión |
 
 ---
 

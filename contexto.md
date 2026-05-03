@@ -7,13 +7,27 @@
 
 ## 🎯 Definición del producto
 
-**MementoMundi es una plataforma "phygital" que permite a los jóvenes viajeros transformar las fotos olvidadas de sus móviles en recuerdos tangibles y experiencias interactivas.** Combinamos la venta de pegatinas físicas personalizadas con QR con la creación automática de un diario digital (Scrapbook) estético y geolocalizado que se desbloquea durante el viaje. Posteriormente, estos recuerdos pueden convertirse en otros productos comerciales como lienzos y más.
+**MementoMundi es una plataforma "phygital" que permite a los jóvenes viajeros transformar las fotos olvidadas de sus móviles en recuerdos tangibles y experiencias interactivas.** Combinamos la venta de pegatinas físicas personalizadas con QR con la creación automática de un diario digital (Scrapbook) estético y geolocalizado que se desbloquea durante el viaje.
+
+**Lo único del producto**: No solo vendes pegatinas — vendes la **posibilidad de vivir el viaje múltiples veces**. Cada usuario dejas tu huella en el mundo (red social de viajes públicos) y ves las huellas y paisajes de otros. Luego, en el Scrapbook especial de tu app, NO ves TODAS las fotos (porque la mayoría son malas), sino solo aquellas que **marcaron la diferencia y merecían poner la huella** en ese sitio.
 
 ---
 
 ## 📍 Posicionamiento
 
-**Para los jóvenes viajeros frustrados por acumular miles de fotos olvidadas en el cementerio digital de sus móviles, Memento Mundi ofrece una experiencia física de pegatinas vinculadas por QR a una PWA interactiva, transformando recuerdos desorganizados en un álbum estético, tangible y listo para compartir.**
+**Para adolescentes y jóvenes adultos (16-35 años) que viajen en grupos, parejas o mochilas, frustrados por acumular miles de fotos olvidadas en el cementerio digital de sus móviles, Memento Mundi ofrece una experiencia física de pegatinas personalizadas (15-30€ por 50 uds) vinculadas por QR a una PWA interactiva. Transforma recuerdos desorganizados en un Scrapbook estético curado (solo las fotos que "merecieron la huella"), tangible y listo para compartir. Filosofía: *memento mori* (la vida es corta) + *memento mundi* (el mundo y la amistad no lo son).**
+
+### Target de usuarios
+- 👥 **Grupos de amigos**: viajes de fin de curso, vacaciones, road trips
+- 💑 **Parejas**: viajes románticos, lunas de miel
+- 🌍 **Mochileros** independientes (16-35 años con smartphone)
+
+### Monetización
+- Venta de pegatinas: 15-30€ por 50 uds personalizadas
+- Futuro: Lienzos, otros productos derivados
+
+### Momento "aha!"
+El usuario entiende que la vida es corta (memento mori) pero el mundo no lo es (memento mundi). Las amistades perduran. Cada foto no merece ser recordada, pero las que SÍ merecen INMORTALIZARSE en pegatina física + digital. Ver huellas de otros crea FOMO + comunidad.
 
 ---
 
@@ -210,8 +224,22 @@ funnel-copy-architect (refina)
 **Miembros del equipo**:
 1. **`customer-voice`** ← Analiza feedback acumulado
 2. **`viral-growth-lab`** ← Identifica loops virales
-3. **`funnel-copy-architect`** ← Refina messaging para crecimiento
-4. **`pitch-deck-master`** ← Si buscas inversión
+3. **`tiktok-marketing`** ← Guiones y estrategia TikTok/Reels (Gen Z)
+4. **`funnel-copy-architect`** ← Refina messaging para crecimiento
+5. **`pitch-deck-master`** ← Si buscas inversión
+
+---
+
+### **EQUIPO 7: Cuando necesites CONTENIDO SOCIAL (TikTok/Reels/Video)**
+
+**Miembros del equipo**:
+1. **`tiktok-marketing`** ← Guión completo + sonidos + subtítulos + hashtags
+2. **`viral-growth-lab`** ← Validar potencial viral
+3. **`funnel-copy-architect`** ← Pulir hooks y CTAs del vídeo
+
+**Activar cuando**: se mencione TikTok, Reels, vídeo viral, contenido Gen Z, redes sociales, o al preparar lanzamiento.
+
+**Concepto core de MementoMundi para TikTok**: La transformación visual (foto olvidada → pegatina física + scrapbook digital). El momento "peeling" es el hook. Formato ideal: antes/después, ASMR pegatinas, "¿sabías que tus fotos están muriendo?"
 
 ---
 
