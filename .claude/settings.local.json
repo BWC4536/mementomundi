@@ -1,11 +1,16 @@
 {
-  "enabledPlugins": {
-    "code-simplifier@claude-plugins-official": true
-  },
   "permissions": {
     "allow": [
       "Read(//d/PERSONAL/Dinero/memento/**)",
-      "Bash(npx create-next-app@latest memento-app --typescript --tailwind --app --src-dir --import-alias \"@/*\" --no-git --yes)"
+      "Bash(npx create-next-app@latest memento-app --typescript --tailwind --app --src-dir --import-alias \"@/*\" --no-git --yes)",
+      "Bash(cd:*)",
+      "Bash(npm run:*)",
+      "Bash(vercel ls:*)",
+      "Bash(vercel inspect:*)",
+      "Bash(vercel logs:*)"
     ]
+  },
+  "enabledPlugins": {
+    "code-simplifier@claude-plugins-official": true
   }
 }

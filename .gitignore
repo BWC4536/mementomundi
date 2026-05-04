@@ -20,3 +20,6 @@ out/
 # Editor
 .idea/
 .vscode/
+
+.vercel
+.env*.local
