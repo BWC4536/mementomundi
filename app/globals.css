@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --cream: #EAE7DA;
+  --pink: #FFB4AD;
+  --orange: #FA9223;
+  --teal: #5CA4A4;
+  --teal-dark: #066FB4;
+  --navy: #0B2150;
+}
+
+/* Brand-specific styles */
+.font-brasica {
+  font-family: 'Playfair Display', serif;
+}
+
+.font-grown {
+  font-family: 'Nunito', sans-serif;
+}
+
+/* Hover states */
+.btn-primary {
+  @apply transition-all duration-150;
+}
+
+.btn-primary:hover {
+  @apply -translate-x-1 -translate-y-1 shadow-lg;
+}
+
+.btn-primary:active {
+  @apply translate-x-0.5 translate-y-0.5;
+}
+
+.card-trip {
+  @apply transition-all duration-200 cursor-pointer;
+}
+
+.card-trip:hover {
+  @apply -translate-y-1 shadow-card-hover;
+}
+
+.icon-btn {
+  @apply transition-all duration-150;
+}
+
+.icon-btn:hover {
+  @apply scale-105 bg-navy bg-opacity-5;
+}
+
+.nav-item {
+  @apply transition-all duration-150 cursor-pointer;
+}
+
+.nav-item:hover {
+  @apply bg-navy bg-opacity-5 pl-8;
+}
+
+.mascot-help {
+  @apply transition-transform duration-200 cursor-pointer;
+}
+
+.mascot-help:hover {
+  @apply -translate-y-0.5 -rotate-1;
+}
+
+/* Dot pattern background */
+.bg-dots {
+  background-image: radial-gradient(circle, rgba(11, 33, 80, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+}

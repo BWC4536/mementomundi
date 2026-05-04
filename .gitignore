@@ -1,4 +1,22 @@
+# dependencies
 node_modules/
-hola-mundo/node_modules/
+
+# Next.js
 .next/
-hola-mundo/.next/
+out/
+
+# env files
+.env
+.env.local
+.env*.local
+
+# Vercel
+.vercel
+
+# OS
+.DS_Store
+*.pem
+
+# Editor
+.idea/
+.vscode/
