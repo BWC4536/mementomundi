@@ -5,14 +5,23 @@ import type { Trip } from '@/types'
 
 interface TripCardProps {
   trip: Trip
+  index?: number
 }
 
-export function TripCard({ trip }: TripCardProps) {
+export function TripCard({ trip, index = 0 }: TripCardProps) {
+  const rotation = index % 2 === 0 ? -0.8 : 0.6
+
   return (
     <motion.div
-      whileHover={{ y: -4 }}
+      initial={{ rotate: rotation }}
+      whileHover={{ y: -4, rotate: 0 }}
       transition={{ duration: 0.2 }}
-      className="card-trip relative bg-white rounded-2xl p-4 pt-5.5 shadow-card-soft overflow-visible cursor-pointer"
+      className="card-trip relative bg-white rounded-2xl px-4 py-4 overflow-visible cursor-pointer"
+      style={{
+        paddingTop: 22,
+        border: `2px solid ${trip.color}`,
+        boxShadow: `4px 4px 0px ${trip.color}`,
+      }}
     >
       {/* Peel corner (top-right) */}
       <div className="absolute top-0 right-0 w-11 h-11 pointer-events-none z-20">
@@ -35,29 +44,29 @@ export function TripCard({ trip }: TripCardProps) {
         </svg>
       </div>
 
-      {/* Content */}
+      {/* Header */}
       <div className="flex items-center gap-3 mb-3">
         <div
-          className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl flex-shrink-0"
+          className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0"
           style={{ background: trip.color }}
         >
           {trip.emoji}
         </div>
         <div className="flex-1">
           <p className="font-brasica font-bold text-base text-navy mb-0.5">{trip.name}</p>
-          <p className="text-xs text-navy text-opacity-55">📍 {trip.place}</p>
+          <p className="text-xs text-navy opacity-55">📍 {trip.place}</p>
         </div>
       </div>
 
-      {/* Sticker progress */}
+      {/* Sticker bar */}
       <div className="mb-2">
-        <div className="flex justify-between text-xs text-navy text-opacity-60 mb-1">
+        <div className="flex justify-between text-xs text-navy opacity-60 mb-1">
           <span>{trip.stickersUsed} puestas</span>
           <span>{trip.stickersTotal - trip.stickersUsed} restantes</span>
         </div>
-        <div className="h-1.5 rounded-full bg-cream overflow-hidden">
+        <div className="h-1.5 rounded-full overflow-hidden" style={{ background: '#EAE7DA' }}>
           <div
-            className="h-full bg-orange rounded-full transition-all"
+            className="h-full rounded-full bg-orange transition-all"
             style={{ width: `${(trip.stickersUsed / trip.stickersTotal) * 100}%` }}
           />
         </div>
@@ -68,18 +77,17 @@ export function TripCard({ trip }: TripCardProps) {
         {trip.participants.map((p, i) => (
           <div
             key={i}
-            className={`w-6.5 h-6.5 rounded-full flex items-center justify-center text-white font-bold text-xs ${
-              i > 0 ? '-ml-2' : ''
-            }`}
+            className="w-6 h-6 rounded-full flex items-center justify-center text-white font-bold text-xs flex-shrink-0"
             style={{
               background: ['#5CA4A4', '#FA9223', '#FFB4AD', '#066FB4'][i % 4],
               border: '2px solid white',
+              marginLeft: i > 0 ? -8 : 0,
             }}
           >
             {p[0].toUpperCase()}
           </div>
         ))}
-        <span className="ml-2.5 text-xs text-navy text-opacity-50">{trip.participants.join(', ')}</span>
+        <span className="ml-2.5 text-xs text-navy opacity-50">{trip.participants.join(', ')}</span>
       </div>
     </motion.div>
   )

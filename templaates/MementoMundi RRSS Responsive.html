@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MementoMundi RRSS — Responsive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;height:100%;}
+body{font-family:'Nunito',sans-serif;background:#f0eee9;}
+
+/* ── BOTTOM NAV (RRSS style) ── */
+.bottom-nav{
+  position:absolute; left:0; right:0; bottom:0;
+  background:#EAE7DA;
+  border-top:1.5px solid rgba(11,33,80,0.09);
+  display:flex;align-items:center;justify-content:space-around;
+  padding:10px 8px 14px;
+  z-index:30;
+}
+.nav-btn{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  background:none;border:none;cursor:pointer;
+  font-size:9px;font-weight:800;color:#0B2150;
+  padding:4px 6px;border-radius:12px;
+  transition:opacity .15s,transform .15s;
+  font-family:'Nunito',sans-serif;
+}
+.nav-btn:hover{transform:translateY(-1px);}
+.nav-icon-wrap{display:flex;align-items:center;justify-content:center;}
+.nav-btn.active .nav-icon-wrap{
+  background:#FA922215;border-radius:10px;padding:4px;
+  box-shadow:2px 2px 0 rgba(11,33,80,0.15);
+}
+.nav-qr{
+  width:56px;height:56px;
+  background:#FA9223;border-radius:16px;
+  display:flex;align-items:center;justify-content:center;
+  border:2.5px solid #0B2150;
+  box-shadow:3px 3px 0 #0B2150;
+  margin-top:-20px;
+  transition:transform .15s,box-shadow .15s;
+  position:relative;cursor:pointer;
+}
+.nav-qr:hover{transform:translate(-1px,-2px);box-shadow:5px 5px 0 #0B2150;}
+.nav-qr::after{
+  content:'';position:absolute;top:0;right:0;
+  width:16px;height:16px;
+  background:linear-gradient(135deg,rgba(255,255,255,0.3) 50%,transparent 50%);
+  border-radius:0 14px 0 0;
+}
+
+/* ── PILLS / TABS ── */
+.sticker-pill{
+  display:inline-flex;align-items:center;gap:5px;
+  border-radius:99px;padding:5px 13px;
+  font-weight:800;font-size:13px;
+  cursor:pointer;border:none;
+  font-family:'Nunito',sans-serif;
+  transition:transform .15s;
+}
+.sticker-pill:hover{transform:rotate(-1deg) scale(1.04);}
+.sticker-pill.active{background:#FA9223;color:white;box-shadow:2px 2px 0 #0B2150;}
+.sticker-pill.inactive{background:rgba(11,33,80,0.09);color:rgba(11,33,80,0.5);}
+
+/* ── STORIES ── */
+.dot-bg{
+  background-image:radial-gradient(circle,rgba(11,33,80,0.07) 1px,transparent 1px);
+  background-size:20px 20px;
+}
+.stories-scroll{display:flex;gap:12px;overflow-x:auto;padding-bottom:4px;}
+.stories-scroll::-webkit-scrollbar{height:0;}
+.story-item{display:flex;flex-direction:column;align-items:center;gap:5px;flex-shrink:0;cursor:pointer;}
+.story-avatar{width:58px;height:58px;border-radius:50%;position:relative;transition:transform .2s;}
+.story-avatar:hover{transform:scale(1.07);}
+.story-avatar-inner{
+  width:58px;height:58px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;font-weight:800;
+  border:2.5px solid #0B2150;overflow:hidden;
+}
+.story-pin{
+  position:absolute;bottom:-4px;right:-4px;
+  background:#FA9223;color:white;
+  border-radius:99px;padding:2px 6px;
+  font-size:8px;font-weight:800;
+  border:1.5px solid #0B2150;
+  box-shadow:1px 1px 0 #0B2150;
+}
+.story-label{font-size:10px;font-weight:700;color:#0B2150;opacity:0.6;text-align:center;max-width:62px;line-height:1.2;}
+
+/* ── POST CARD ── */
+.post-card{
+  background:white;border-radius:22px;
+  position:relative;
+  box-shadow:0 4px 20px rgba(11,33,80,0.10),0 1px 4px rgba(11,33,80,0.06);
+  transition:transform .25s cubic-bezier(.2,.7,.2,1),box-shadow .25s;
+}
+.post-card:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(11,33,80,0.15);}
+.post-inner{border-radius:22px;overflow:hidden;}
+.post-header{display:flex;align-items:center;gap:9px;padding:13px 14px 10px;}
+.post-avatar{
+  width:36px;height:36px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:800;color:white;
+  border:2px solid #0B2150;flex-shrink:0;
+}
+.post-user{font-weight:800;font-size:13px;color:#0B2150;}
+.post-loc{font-size:11px;color:#0B2150;opacity:0.5;display:flex;align-items:center;gap:3px;margin-top:1px;}
+.post-time{margin-left:auto;font-size:10px;color:#0B2150;opacity:0.35;}
+.photo-wrap{margin:0 13px 12px;border-radius:16px;overflow:hidden;position:relative;}
+.date-stamp{
+  position:absolute;bottom:10px;left:10px;
+  background:#EAE7DA;color:#0B2150;
+  border-radius:8px;padding:4px 9px;
+  font-size:11px;font-weight:800;
+  border:1.5px solid #0B2150;
+  box-shadow:2px 2px 0 #0B2150;
+  letter-spacing:0.08em;transform:rotate(-2deg);
+  font-family:'Playfair Display',serif;
+}
+.caption{padding:0 14px 10px;font-size:13px;color:#0B2150;line-height:1.55;}
+.mention-chip{
+  display:inline-flex;align-items:center;gap:4px;
+  background:#FA922220;color:#FA9223;
+  border-radius:99px;padding:3px 10px;
+  font-size:11px;font-weight:800;
+  border:1.5px solid #FA922240;
+  margin-left:14px;
+}
+.action-row{display:flex;align-items:center;gap:16px;padding:0 14px 12px;}
+.action-btn{
+  display:flex;align-items:center;gap:5px;
+  background:none;border:none;cursor:pointer;
+  font-size:12px;font-weight:700;color:#0B2150;opacity:0.55;
+  padding:4px;border-radius:8px;
+  transition:opacity .15s,transform .15s;
+}
+.action-btn:hover{opacity:1;transform:scale(1.1);}
+.action-btn.bookmark{margin-left:auto;}
+.add-scrapbook-btn{
+  margin:0 14px 14px;
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  background:#EBF5F5;color:#5CA4A4;
+  border:2px solid #5CA4A4;
+  border-radius:99px;padding:10px 16px;
+  font-weight:800;font-size:13px;cursor:pointer;
+  font-family:'Nunito',sans-serif;
+  box-shadow:2px 2px 0 #5CA4A4;
+}
+.scrapbook-title{
+  padding:4px 14px 8px;
+  font-family:'Playfair Display',serif;
+  font-size:22px;font-weight:900;color:#0B2150;
+  line-height:1.1;
+}
+.photo-mosaic{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:6px;margin:0 13px 10px;border-radius:16px;overflow:hidden;
+}
+.mosaic-cell{
+  height:100px;display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;font-size:28px;
+}
+.scrapbook-meta{
+  padding:0 14px 10px;font-size:12px;color:#0B2150;opacity:0.5;
+  display:flex;align-items:center;gap:6px;
+}
+.scrapbook-cta{
+  margin:0 14px 10px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  background:#FA9223;color:white;border:none;border-radius:99px;
+  padding:13px 20px;font-weight:800;font-size:14px;cursor:pointer;
+  box-shadow:3px 3px 0 #0B2150;font-family:'Nunito',sans-serif;
+}
+.saves-count{padding:0 14px 14px;font-size:12px;color:#0B2150;opacity:0.45;font-weight:600;}
+.coauthor-avatars{display:flex;align-items:center;}
+.coauthor-avatars .post-avatar:not(:first-child){margin-left:-12px;}
+.coauthor-tag{
+  display:inline-flex;align-items:center;gap:4px;
+  background:#FFB4AD40;color:#c44;
+  border-radius:99px;padding:3px 10px;
+  font-size:11px;font-weight:800;
+  border:1.5px solid #FFB4AD;
+  margin-left:14px;
+}
+.coauthor-badge{
+  position:absolute;top:10px;right:10px;
+  background:#FFB4AD;color:#0B2150;
+  border-radius:99px;padding:3px 9px;
+  font-size:10px;font-weight:800;
+  border:1.5px solid #0B2150;
+  box-shadow:1px 1px 0 #0B2150;
+}
+
+/* ── BELL + AVATAR ── */
+.bell-btn{
+  width:34px;height:34px;border-radius:50%;
+  background:rgba(11,33,80,0.07);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;border:none;position:relative;
+  transition:background .15s,transform .15s;
+}
+.bell-btn:hover{background:rgba(11,33,80,0.13);transform:scale(1.06);}
+.bell-dot{
+  position:absolute;top:6px;right:6px;
+  width:7px;height:7px;border-radius:50%;
+  background:#FA9223;border:1.5px solid #EAE7DA;
+}
+
+/* ── DRAWER (scoped to artboard) ── */
+.drawer-backdrop{
+  position:absolute;inset:0;z-index:200;
+  background:rgba(11,33,80,0.35);
+}
+.drawer-panel{
+  position:absolute;top:0;left:0;bottom:0;
+  width:min(82%,320px);
+  background:#EAE7DA;
+  background-image:radial-gradient(circle,#0B215010 1px,transparent 1px);
+  background-size:18px 18px;
+  border-radius:0 28px 28px 0;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  box-shadow:6px 0 32px rgba(11,33,80,0.14);
+  z-index:201;
+}
+.mm-nav-item{transition:background .15s,padding-left .15s;cursor:pointer;}
+.mm-nav-item:hover{background:rgba(11,33,80,0.05)!important;padding-left:26px!important;}
+.mm-icon-btn{transition:background .15s,transform .15s;border-radius:8px;}
+.mm-icon-btn:hover{background:rgba(11,33,80,0.12)!important;transform:scale(1.06);}
+.mm-scroll::-webkit-scrollbar{width:0;}.mm-scroll{scrollbar-width:none;}
+
+/* desktop sidebar */
+.desktop-sidebar-item{transition:background .15s,padding-left .15s;}
+.desktop-sidebar-item:hover{background:rgba(11,33,80,0.06);padding-left:28px!important;}
+
+.feed-scroll::-webkit-scrollbar{width:0;}
+.feed-scroll{scrollbar-width:none;}
+</style>
+</head>
+<body>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<div id="root"></div>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel">
+const { useState } = React;
+
+/* ── Mascot ── */
+function Mascot({ size=80, handUp=false, color="#0B2150" }) {
+  return (
+    <svg width={size} height={size*1.3} viewBox="0 0 100 130" fill="none">
+      <rect x="38" y="72" width="12" height="35" rx="4" fill={color}/>
+      <rect x="52" y="72" width="12" height="35" rx="4" fill={color}/>
+      <ellipse cx="44" cy="109" rx="10" ry="5" fill={color}/>
+      <ellipse cx="58" cy="109" rx="10" ry="5" fill={color}/>
+      <circle cx="50" cy="42" r="32" fill="white" stroke={color} strokeWidth="3"/>
+      <path d="M72 16 L82 26 L72 26 Z" fill="#EAE7DA" stroke={color} strokeWidth="2" strokeLinejoin="round"/>
+      <ellipse cx="42" cy="42" rx="3" ry="4" fill={color}/>
+      <ellipse cx="58" cy="42" rx="3" ry="4" fill={color}/>
+      {handUp && <>
+        <line x1="50" y1="80" x2="20" y2="55" stroke={color} strokeWidth="3" strokeLinecap="round"/>
+        <circle cx="16" cy="52" r="5" fill={color}/>
+        <text x="2" y="40" fontSize="18" fill={color} fontWeight="bold">?</text>
+      </>}
+    </svg>
+  );
+}
+
+/* ── PeelCorner ── */
+function PeelCorner({ size=48, fromColor="#5CA4A4" }) {
+  const S=size, id=`pc-${fromColor.replace('#','')}${S}`;
+  return (
+    <div style={{position:"absolute",top:0,right:0,width:S,height:S,pointerEvents:"none",zIndex:4}}>
+      <svg width={S} height={S} viewBox={`0 0 ${S} ${S}`} fill="none">
+        <defs>
+          <filter id={`shd-${id}`} x="-40%" y="-40%" width="200%" height="200%">
+            <feDropShadow dx="-2" dy="2" stdDeviation="3" floodColor="rgba(0,0,0,0.22)"/>
+          </filter>
+          <linearGradient id={`grd-${id}`} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#f9f6ef"/>
+            <stop offset="55%" stopColor="#EAE7DA"/>
+            <stop offset="100%" stopColor="#d6d2c3"/>
+          </linearGradient>
+        </defs>
+        <ellipse cx={S*.6} cy={S*.4} rx={S*.28} ry={S*.16}
+          transform={`rotate(-45 ${S*.6} ${S*.4})`} fill="rgba(0,0,0,0.11)"/>
+        <path d={`M${S} 0 L${S} ${S*.8} Q${S*.86} ${S*.5} ${S*.2} 0 Z`}
+          fill={`url(#grd-${id})`} filter={`url(#shd-${id})`}/>
+        <path d={`M${S*.2} 0 Q${S*.58} ${S*.24} ${S} ${S*.8}`}
+          stroke={fromColor} strokeWidth="0.7" strokeDasharray="3 2" opacity="0.3" fill="none"/>
+      </svg>
+    </div>
+  );
+}
+
+function PhotoBg({ color="#5CA4A4", emoji, height=220, label="" }) {
+  return (
+    <div style={{
+      width:"100%",height,background:color,
+      display:"flex",flexDirection:"column",
+      alignItems:"center",justifyContent:"center",gap:10,
+      position:"relative",overflow:"hidden"
+    }}>
+      <div style={{position:"absolute",inset:0,backgroundImage:"repeating-linear-gradient(-45deg,transparent,transparent 9px,rgba(255,255,255,0.12) 9px,rgba(255,255,255,0.12) 10px)"}}/>
+      <span style={{fontSize:48,filter:"drop-shadow(0 3px 8px rgba(0,0,0,0.25))"}}>{emoji}</span>
+      <span style={{fontSize:10,fontWeight:700,color:"rgba(255,255,255,0.7)",letterSpacing:"0.14em",textTransform:"uppercase",textAlign:"center",padding:"0 16px"}}>{label}</span>
+    </div>
+  );
+}
+
+/* ── Icons ── */
+const IconHeart = ({filled=false})=> <svg width="18" height="18" viewBox="0 0 24 24" fill={filled?"#FA9223":"none"} stroke={filled?"#FA9223":"#0B2150"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>;
+const IconComment = ()=> <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0B2150" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>;
+const IconShare = ()=> <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0B2150" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>;
+const IconBookmark = ()=> <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0B2150" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>;
+const IconArrow = ()=> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>;
+const IconHouse = ()=> <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0B2150" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>;
+const IconStore = ()=> <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0B2150" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l1.5-5h15L21 9"/><path d="M4 9v11h16V9"/><path d="M9 14h6"/></svg>;
+const IconQR = ()=> <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3M21 17v4h-4M14 21h0"/></svg>;
+const IconMapPin = ()=> <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0B2150" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>;
+const IconUser = ()=> <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0B2150" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>;
+const IconBell = ()=> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0B2150" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>;
+const IconPin = ()=> <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>;
+const IconScrapbook = ()=> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18M9 21V9"/></svg>;
+const IconPlus = ()=> <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FA9223" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>;
+
+/* ── DATA ── */
+const STORIES = [
+  { id:"you",   label:"Tu viaje", plus:true,  bg:"#EAE7DA", border:"#FA9223" },
+  { id:"s1",    label:"@martina", plus:false, bg:"#5CA4A4",  border:"#0B2150", emoji:"🏛️", city:"Roma"   },
+  { id:"s2",    label:"@arthur",  plus:false, bg:"#FA9223",  border:"#0B2150", emoji:"🌊", city:"Bali"   },
+  { id:"s3",    label:"@lucas",   plus:false, bg:"#FFB4AD",  border:"#0B2150", emoji:"🗼", city:"Lisboa" },
+  { id:"s4",    label:"@sara",    plus:false, bg:"#066FB4",  border:"#0B2150", emoji:"🌸", city:"Kyoto"  },
+  { id:"s5",    label:"@leo",     plus:false, bg:"#0B2150",  border:"#5CA4A4", emoji:"🏔️", city:"Nepal"  },
+];
+
+const NAV_ITEMS = [
+  { label:"Viajes", icon:"✈️", href:"MementoMundi Home.html" },
+  { label:"RRSS", icon:"🌍", active:true },
+  { label:"Tienda", icon:"🛒", href:"MementoMundi Tienda.html" },
+  { label:"Favoritos", icon:"❤️" },
+  { label:"Carrito", icon:"🧺" },
+  { label:"Usuario", icon:"👤" },
+  { label:"Sobre Nosotros", icon:"💛" },
+];
+
+/* ── Stories Row ── */
+function StoriesRow() {
+  return (
+    <div style={{padding:"14px 16px 10px",flexShrink:0}}>
+      <p style={{fontSize:12,fontWeight:800,color:"#0B2150",opacity:0.45,letterSpacing:"0.12em",textTransform:"uppercase",marginBottom:10,fontFamily:"'Playfair Display',serif"}}>Viajes en directo</p>
+      <div className="stories-scroll">
+        {STORIES.map(s => (
+          <div key={s.id} className="story-item">
+            <div className="story-avatar">
+              <div className="story-avatar-inner" style={{
+                background: s.plus ? "rgba(11,33,80,0.05)" : s.bg,
+                border:`2.5px solid ${s.border}`,
+                boxShadow:`2px 2px 0 ${s.border}`
+              }}>
+                {s.plus ? <IconPlus/> : <span style={{fontSize:24}}>{s.emoji}</span>}
+              </div>
+              {s.city && <div className="story-pin">📍{s.city}</div>}
+            </div>
+            <span className="story-label" style={{color:s.plus?"#FA9223":undefined,opacity:s.plus?1:0.6}}>
+              {s.plus?"Tu viaje":s.label}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ── Posts ── */
+function Post1() {
+  const [liked,setLiked] = useState(false);
+  return (
+    <div className="post-card">
+      <PeelCorner size={48} fromColor="#5CA4A4"/>
+      <div className="post-inner">
+        <div className="post-header">
+          <div className="post-avatar" style={{background:"#5CA4A4"}}>M</div>
+          <div style={{flex:1}}>
+            <div className="post-user">@martina_travels</div>
+            <div className="post-loc"><IconPin/><span>Cinque Terre, Italia</span></div>
+          </div>
+          <div className="post-time">hace 2h</div>
+        </div>
+        <div className="photo-wrap" style={{transform:"rotate(-2deg)",boxShadow:"0 6px 20px rgba(11,33,80,0.15)"}}>
+          <PhotoBg color="#5CA4A4" emoji="🏛️" height={220} label="Cinque Terre · Abril 2025"/>
+          <div className="date-stamp">14 ABR</div>
+        </div>
+        <p className="caption">el sunset de mi vida 🌅 ¿alguien más ha estado?</p>
+        <div style={{paddingBottom:8}}><span className="mention-chip">👋 Con @lucas.viaja</span></div>
+        <div className="action-row">
+          <button className="action-btn" onClick={()=>setLiked(!liked)}><IconHeart filled={liked}/></button>
+          <button className="action-btn"><IconComment/></button>
+          <button className="action-btn"><IconShare/></button>
+          <button className="action-btn bookmark"><IconBookmark/></button>
+        </div>
+        <button className="add-scrapbook-btn"><IconScrapbook/>Añadir a mi scrapbook</button>
+      </div>
+    </div>
+  );
+}
+
+const MOSAIC1 = [
+  {color:"#FA9223",emoji:"🏛️",rot:"-3deg"},
+  {color:"#5CA4A4",emoji:"🌅",rot:"2deg"},
+  {color:"#FFB4AD",emoji:"🍕",rot:"-1deg"},
+  {color:"#066FB4",emoji:"🛵",rot:"3deg"},
+];
+function Post2() {
+  return (
+    <div className="post-card">
+      <PeelCorner size={48} fromColor="#FA9223"/>
+      <div className="post-inner">
+        <div className="post-header">
+          <div className="post-avatar" style={{background:"#FA9223"}}>A</div>
+          <div style={{flex:1}}>
+            <div className="post-user">@arthur.goes</div>
+            <div className="post-loc"><IconPin/><span>Roma, Italia</span></div>
+          </div>
+          <div className="post-time">hace 5h</div>
+        </div>
+        <h3 className="scrapbook-title">ROMA<br/>EN 4 DÍAS</h3>
+        <div className="photo-mosaic">
+          {MOSAIC1.map((m,i)=>(
+            <div key={i} className="mosaic-cell" style={{background:m.color,transform:`rotate(${m.rot})`}}>
+              <div style={{position:"absolute",inset:0,backgroundImage:"repeating-linear-gradient(-45deg,transparent,transparent 7px,rgba(255,255,255,0.13) 7px,rgba(255,255,255,0.13) 8px)"}}/>
+              <span style={{fontSize:32,position:"relative",zIndex:1,filter:"drop-shadow(0 2px 6px rgba(0,0,0,0.2))"}}>{m.emoji}</span>
+            </div>
+          ))}
+        </div>
+        <div className="scrapbook-meta">
+          <span>📍 12 paradas</span><span style={{opacity:0.3}}>·</span><span>📸 47 fotos</span>
+        </div>
+        <button className="scrapbook-cta">Ver scrapbook completo <IconArrow/></button>
+        <p className="saves-count">❤️ 234 viajeros guardaron este scrapbook</p>
+        <div className="action-row" style={{paddingTop:0}}>
+          <button className="action-btn"><IconHeart/></button>
+          <button className="action-btn"><IconComment/></button>
+          <button className="action-btn"><IconShare/></button>
+          <button className="action-btn bookmark"><IconBookmark/></button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const MOSAIC2 = [
+  {color:"#5CA4A4",emoji:"🌊",rot:"2deg"},
+  {color:"#0B2150",emoji:"🏯",rot:"-2deg"},
+  {color:"#FFB4AD",emoji:"🍜",rot:"3deg"},
+  {color:"#FA9223",emoji:"🎌",rot:"-1deg"},
+];
+function Post3() {
+  return (
+    <div className="post-card">
+      <PeelCorner size={48} fromColor="#FFB4AD"/>
+      <div className="post-inner">
+        <div className="post-header">
+          <div className="coauthor-avatars">
+            <div className="post-avatar" style={{background:"#066FB4",zIndex:2,position:"relative"}}>A</div>
+            <div className="post-avatar" style={{background:"#FFB4AD",zIndex:1,position:"relative"}}>M</div>
+          </div>
+          <div style={{flex:1,marginLeft:6}}>
+            <div className="post-user">@arthur + @marta</div>
+            <div className="post-loc"><IconPin/><span>Japón, 2025</span></div>
+          </div>
+          <div className="post-time">hace 1d</div>
+        </div>
+        <div style={{paddingLeft:14,paddingBottom:6}}>
+          <span className="coauthor-tag">✈️ Viaje compartido</span>
+        </div>
+        <h3 className="scrapbook-title">JAPÓN,<br/>DOS MIRADAS</h3>
+        <div className="photo-mosaic" style={{position:"relative"}}>
+          {MOSAIC2.map((m,i)=>(
+            <div key={i} className="mosaic-cell" style={{background:m.color,transform:`rotate(${m.rot})`}}>
+              <div style={{position:"absolute",inset:0,backgroundImage:"repeating-linear-gradient(-45deg,transparent,transparent 7px,rgba(255,255,255,0.13) 7px,rgba(255,255,255,0.13) 8px)"}}/>
+              <span style={{fontSize:32,position:"relative",zIndex:1,filter:"drop-shadow(0 2px 6px rgba(0,0,0,0.2))"}}>{m.emoji}</span>
+            </div>
+          ))}
+          <div className="coauthor-badge">👥 2 autores</div>
+        </div>
+        <div className="scrapbook-meta">
+          <span>📍 18 paradas</span><span style={{opacity:0.3}}>·</span><span>📸 83 fotos</span><span style={{opacity:0.3}}>·</span><span>🗓️ 10 días</span>
+        </div>
+        <button className="scrapbook-cta">Ver scrapbook completo <IconArrow/></button>
+        <p className="saves-count">❤️ 512 viajeros guardaron este scrapbook</p>
+        <div className="action-row">
+          <button className="action-btn"><IconHeart/></button>
+          <button className="action-btn"><IconComment/></button>
+          <button className="action-btn"><IconShare/></button>
+          <button className="action-btn bookmark"><IconBookmark/></button>
+        </div>
+        <button className="add-scrapbook-btn"><IconScrapbook/>Añadir a mi scrapbook</button>
+      </div>
+    </div>
+  );
+}
+
+/* ── Bottom Nav (mobile + tablet) ── */
+function BottomNav() {
+  const [active,setActive] = useState("rrss");
+  return (
+    <div className="bottom-nav">
+      <button className={`nav-btn ${active==="inicio"?"active":""}`} onClick={()=>setActive("inicio")} style={{opacity:active==="inicio"?1:0.42}}>
+        <div className="nav-icon-wrap"><IconHouse/></div><span>Inicio</span>
+      </button>
+      <button className={`nav-btn ${active==="tienda"?"active":""}`} onClick={()=>setActive("tienda")} style={{opacity:active==="tienda"?1:0.42}}>
+        <div className="nav-icon-wrap"><IconStore/></div><span>Tienda</span>
+      </button>
+      <button className="nav-btn" style={{opacity:1}}>
+        <div className="nav-qr"><IconQR/></div>
+        <span style={{marginTop:6,opacity:0.6}}>Escanear</span>
+      </button>
+      <button className={`nav-btn ${active==="mundo"?"active":""}`} onClick={()=>setActive("mundo")} style={{opacity:active==="mundo"?1:0.42}}>
+        <div className="nav-icon-wrap"><IconMapPin/></div><span>Mundo</span>
+      </button>
+      <button className={`nav-btn ${active==="diario"?"active":""}`} onClick={()=>setActive("diario")} style={{opacity:active==="diario"?1:0.42}}>
+        <div className="nav-icon-wrap"><IconUser/></div><span>Mi diario</span>
+      </button>
+    </div>
+  );
+}
+
+/* ── Drawer (scoped to artboard) ── */
+function Drawer({ open, onClose }) {
+  if(!open) return null;
+  return (
+    <>
+      <div className="drawer-backdrop" onClick={onClose}/>
+      <div className="drawer-panel">
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"20px 22px 16px",borderBottom:"2px solid rgba(11,33,80,0.07)"}}>
+          <div style={{display:"flex",alignItems:"center",gap:12}}>
+            <div style={{width:44,height:44,borderRadius:"50%",background:"#066FB4",border:"2.5px solid #0B2150",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:800,fontSize:18,color:"white"}}>A</div>
+            <div>
+              <p style={{color:"#0B2150",fontWeight:800,fontSize:16,fontFamily:"'Playfair Display',serif"}}>Ana García</p>
+              <p style={{color:"#0B2150",opacity:0.4,fontSize:11}}>@anaviajera</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="mm-icon-btn" style={{background:"#0B215015",border:"none",borderRadius:"50%",width:32,height:32,color:"#0B2150",fontSize:15,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>✕</button>
+        </div>
+        <nav style={{flex:1,overflowY:"auto",padding:"10px 0"}} className="mm-scroll">
+          {NAV_ITEMS.map((item,idx)=>(
+            <div key={idx} className="mm-nav-item" style={{display:"flex",alignItems:"center",gap:14,padding:"14px 22px",background:item.active?"rgba(11,33,80,0.07)":"transparent",borderLeft:item.active?"4px solid #FA9223":"4px solid transparent"}}>
+              <span style={{fontSize:20}}>{item.icon}</span>
+              <span style={{fontWeight:item.active?800:700,fontSize:17,color:"#0B2150",opacity:item.active?1:0.7,fontFamily:item.active?"'Playfair Display',serif":"'Nunito',sans-serif",flex:1}}>{item.label}</span>
+              {item.active && <div style={{width:8,height:8,borderRadius:"50%",background:"#FA9223"}}/>}
+            </div>
+          ))}
+          <div style={{margin:"8px 22px",height:1.5,background:"rgba(11,33,80,0.08)"}}/>
+          <div className="mm-nav-item" style={{display:"flex",alignItems:"center",gap:14,padding:"12px 22px"}}>
+            <Mascot size={28} handUp={true} color="#0B2150"/>
+            <span style={{fontWeight:700,fontSize:17,color:"#0B2150",opacity:0.55}}>Ayuda</span>
+          </div>
+        </nav>
+        <div style={{padding:"16px 22px 22px",borderTop:"2px solid rgba(11,33,80,0.07)"}}>
+          <p style={{fontSize:11,color:"#0B2150",opacity:0.35,textAlign:"center",fontWeight:600,letterSpacing:"0.06em"}}>MEMENTO MUNDI © 2025</p>
+        </div>
+      </div>
+    </>
+  );
+}
+
+/* ── Top Bar (mobile/tablet) ── */
+function TopBar({ onHam, padding="12px 16px", logoH=26 }) {
+  const [activeTab,setActiveTab] = useState("paraTi");
+  return (
+    <div style={{position:"sticky",top:0,zIndex:50,background:"#EAE7DA",padding:padding,borderBottom:"1.5px solid rgba(11,33,80,0.07)",flexShrink:0}}>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
+        <button onClick={onHam} className="mm-icon-btn" style={{background:"none",border:"none",cursor:"pointer",display:"flex",flexDirection:"column",gap:5,padding:6,borderRadius:8}}>
+          {[0,1,2].map(i=><div key={i} style={{width:24,height:2.5,borderRadius:2,background:"#0B2150"}}/>)}
+        </button>
+        <img src="assets/MEMENTO_FRASE.svg" alt="Memento Mundi" style={{height:logoH,objectFit:"contain"}}/>
+        <div style={{display:"flex",alignItems:"center",gap:8}}>
+          <button className="bell-btn"><IconBell/><div className="bell-dot"/></button>
+          <div style={{width:32,height:32,borderRadius:"50%",background:"#066FB4",border:"2px solid #0B2150",display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:800,color:"white",cursor:"pointer"}}>A</div>
+        </div>
+      </div>
+      <div style={{display:"flex",gap:6,paddingBottom:10}}>
+        {[{id:"paraTi",label:"Para ti"},{id:"siguiendo",label:"Siguiendo"},{id:"cerca",label:"Cerca"}].map(tab=>(
+          <button key={tab.id} className={`sticker-pill ${activeTab===tab.id?"active":"inactive"}`} onClick={()=>setActiveTab(tab.id)}>{tab.label}</button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ============== MOBILE ============== */
+function MobileRRSS() {
+  const [drawer,setDrawer] = useState(false);
+  return (
+    <div className="dot-bg" style={{width:"100%",height:"100%",background:"#EAE7DA",position:"relative",display:"flex",flexDirection:"column",overflow:"hidden",fontFamily:"'Nunito',sans-serif"}}>
+      <TopBar onHam={()=>setDrawer(true)}/>
+      <StoriesRow/>
+      <div style={{height:1,background:"rgba(11,33,80,0.07)",margin:"0 16px"}}/>
+      <div className="feed-scroll" style={{flex:1,overflowY:"auto",padding:"10px 16px 110px",display:"flex",flexDirection:"column",gap:22}}>
+        <Post1/><Post2/><Post3/>
+      </div>
+      <BottomNav/>
+      <Drawer open={drawer} onClose={()=>setDrawer(false)}/>
+    </div>
+  );
+}
+
+/* ============== TABLET ============== */
+function TabletRRSS() {
+  const [drawer,setDrawer] = useState(false);
+  return (
+    <div className="dot-bg" style={{width:"100%",height:"100%",background:"#EAE7DA",position:"relative",display:"flex",flexDirection:"column",overflow:"hidden",fontFamily:"'Nunito',sans-serif"}}>
+      <TopBar onHam={()=>setDrawer(true)} padding="16px 28px" logoH={32}/>
+      <StoriesRow/>
+      <div style={{height:1,background:"rgba(11,33,80,0.07)",margin:"0 28px"}}/>
+      <div className="feed-scroll" style={{flex:1,overflowY:"auto",padding:"18px 28px 110px",display:"grid",gridTemplateColumns:"1fr 1fr",gap:22,alignContent:"start"}}>
+        <Post1/><Post2/><Post3/>
+      </div>
+      <BottomNav/>
+      <Drawer open={drawer} onClose={()=>setDrawer(false)}/>
+    </div>
+  );
+}
+
+/* ============== DESKTOP ============== */
+function DesktopRRSS() {
+  const [drawer,setDrawer] = useState(false);
+  const [activeTab,setActiveTab] = useState("paraTi");
+  return (
+    <div style={{width:"100%",height:"100%",background:"#EAE7DA",position:"relative",fontFamily:"'Nunito',sans-serif",display:"flex",flexDirection:"column",overflow:"hidden"}}>
+      {/* HEADER */}
+      <header style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"18px 32px",background:"#EAE7DA",borderBottom:"1.5px solid rgba(11,33,80,0.06)",flexShrink:0,zIndex:10}}>
+        <div style={{display:"flex",alignItems:"center",gap:18}}>
+          <button onClick={()=>setDrawer(true)} className="mm-icon-btn" style={{background:"none",border:"none",cursor:"pointer",display:"flex",flexDirection:"column",gap:5,padding:8,borderRadius:8}}>
+            {[0,1,2].map(i=><div key={i} style={{width:26,height:2.5,borderRadius:2,background:"#0B2150"}}/>)}
+          </button>
+          <img src="assets/MEMENTO_FRASE.svg" alt="Memento Mundi" style={{height:34,objectFit:"contain"}}/>
+        </div>
+        <div style={{display:"flex",gap:8}}>
+          {[{id:"paraTi",label:"Para ti"},{id:"siguiendo",label:"Siguiendo"},{id:"cerca",label:"Cerca"}].map(tab=>(
+            <button key={tab.id} className={`sticker-pill ${activeTab===tab.id?"active":"inactive"}`} style={{fontSize:14,padding:"7px 18px"}} onClick={()=>setActiveTab(tab.id)}>{tab.label}</button>
+          ))}
+        </div>
+        <div style={{display:"flex",alignItems:"center",gap:14}}>
+          <div style={{position:"relative"}}>
+            <input placeholder="Buscar viajeros, lugares…" style={{background:"white",border:"1.5px solid rgba(11,33,80,0.1)",borderRadius:99,padding:"10px 16px 10px 38px",fontSize:13,fontFamily:"'Nunito',sans-serif",width:260,color:"#0B2150"}}/>
+            <span style={{position:"absolute",left:14,top:"50%",transform:"translateY(-50%)",fontSize:14}}>🔍</span>
+          </div>
+          <button className="bell-btn" style={{width:38,height:38}}><IconBell/><div className="bell-dot"/></button>
+          <div style={{width:38,height:38,borderRadius:"50%",background:"#066FB4",border:"2px solid #0B2150",display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,fontWeight:800,color:"white",cursor:"pointer"}}>A</div>
+        </div>
+      </header>
+
+      {/* MAIN — 3 col layout */}
+      <div className="dot-bg" style={{flex:1,display:"grid",gridTemplateColumns:"260px 1fr 280px",gap:24,padding:"24px 32px 32px",overflow:"hidden"}}>
+        {/* LEFT: stories vertical */}
+        <aside style={{display:"flex",flexDirection:"column",gap:12,overflow:"hidden"}}>
+          <p style={{fontSize:11,fontWeight:800,color:"#0B2150",opacity:0.45,letterSpacing:"0.14em",textTransform:"uppercase",fontFamily:"'Playfair Display',serif"}}>Viajes en directo</p>
+          <div style={{flex:1,overflowY:"auto",display:"flex",flexDirection:"column",gap:10,paddingRight:6}} className="feed-scroll">
+            {STORIES.map(s=>(
+              <div key={s.id} style={{display:"flex",alignItems:"center",gap:12,padding:"10px 12px",background:"white",borderRadius:14,boxShadow:"0 2px 10px rgba(11,33,80,0.06)",cursor:"pointer"}}>
+                <div style={{position:"relative",flexShrink:0}}>
+                  <div className="story-avatar-inner" style={{width:46,height:46,background:s.plus?"rgba(11,33,80,0.05)":s.bg,border:`2.5px solid ${s.border}`,boxShadow:`2px 2px 0 ${s.border}`,fontSize:18}}>
+                    {s.plus?<IconPlus/>:<span>{s.emoji}</span>}
+                  </div>
+                </div>
+                <div style={{flex:1,minWidth:0}}>
+                  <p style={{fontSize:13,fontWeight:800,color:"#0B2150"}}>{s.plus?"Tu viaje":s.label}</p>
+                  {s.city && <p style={{fontSize:11,color:"#0B2150",opacity:0.5}}>📍 {s.city}</p>}
+                </div>
+              </div>
+            ))}
+          </div>
+        </aside>
+
+        {/* CENTER: feed */}
+        <main className="feed-scroll" style={{overflowY:"auto",display:"flex",flexDirection:"column",gap:22,maxWidth:560,width:"100%",margin:"0 auto"}}>
+          <Post1/><Post2/><Post3/>
+        </main>
+
+        {/* RIGHT: trending */}
+        <aside style={{display:"flex",flexDirection:"column",gap:14,overflow:"hidden"}}>
+          <div style={{background:"white",borderRadius:18,padding:"16px 18px",boxShadow:"0 2px 12px rgba(11,33,80,0.07)"}}>
+            <p style={{fontSize:11,fontWeight:800,color:"#0B2150",opacity:0.45,letterSpacing:"0.14em",textTransform:"uppercase",fontFamily:"'Playfair Display',serif",marginBottom:10}}>Trending</p>
+            {[
+              {tag:"#cinqueterre",posts:"1.2k posts"},
+              {tag:"#japonenotoño",posts:"840 posts"},
+              {tag:"#roadtrip-norte",posts:"512 posts"},
+              {tag:"#islasgriegas",posts:"398 posts"},
+            ].map((t,i)=>(
+              <div key={i} style={{padding:"8px 0",borderTop:i>0?"1px solid rgba(11,33,80,0.06)":"none",cursor:"pointer"}}>
+                <p style={{fontSize:13,fontWeight:800,color:"#FA9223",fontFamily:"'Playfair Display',serif"}}>{t.tag}</p>
+                <p style={{fontSize:11,color:"#0B2150",opacity:0.5}}>{t.posts}</p>
+              </div>
+            ))}
+          </div>
+
+          <div style={{background:"#FA922315",borderRadius:18,padding:"16px 18px",border:"1.5px solid #FA922340"}}>
+            <p style={{fontSize:11,fontWeight:800,color:"#FA9223",letterSpacing:"0.14em",textTransform:"uppercase",fontFamily:"'Playfair Display',serif",marginBottom:6}}>Tu viaje</p>
+            <p style={{fontSize:13,color:"#0B2150",opacity:0.7,marginBottom:12,lineHeight:1.5}}>Comparte tu próxima aventura con la comunidad</p>
+            <button style={{width:"100%",background:"#FA9223",color:"white",border:"none",borderRadius:99,padding:"10px 14px",fontWeight:800,fontSize:13,cursor:"pointer",boxShadow:"3px 3px 0 #0B2150",fontFamily:"'Nunito',sans-serif"}}>+ Crear post</button>
+          </div>
+        </aside>
+      </div>
+
+      <Drawer open={drawer} onClose={()=>setDrawer(false)}/>
+    </div>
+  );
+}
+
+/* ============== APP ============== */
+function App() {
+  return (
+    <DesignCanvas>
+      <DCSection id="rrss-responsive" title="RRSS — Responsive">
+        <DCArtboard id="mobile" label="Mobile · 390 × 844" width={390} height={844}>
+          <MobileRRSS/>
+        </DCArtboard>
+        <DCArtboard id="tablet" label="Tablet · 768 × 1024" width={768} height={1024}>
+          <TabletRRSS/>
+        </DCArtboard>
+        <DCArtboard id="desktop" label="Desktop · 1440 × 900" width={1440} height={900}>
+          <DesktopRRSS/>
+        </DCArtboard>
+      </DCSection>
+    </DesignCanvas>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>

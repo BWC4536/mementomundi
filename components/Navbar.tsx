@@ -21,7 +21,7 @@ export function Navbar() {
         </button>
 
         <img
-          src="/memento-logo.svg"
+          src="/MEMENTO_FRASE.svg"
           alt="Memento Mundi"
           className="h-8 object-contain"
         />

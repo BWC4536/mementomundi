@@ -50,8 +50,8 @@ export default function HomePage() {
         </p>
 
         <div className="space-y-4.5">
-          {MOCK_TRIPS.map((trip) => (
-            <TripCard key={trip.id} trip={trip} />
+          {MOCK_TRIPS.map((trip, i) => (
+            <TripCard key={trip.id} trip={trip} index={i} />
           ))}
         </div>
       </div>

@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MementoMundi — Home (Print)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream:  #EAE7DA;
+    --orange: #FA9223;
+    --teal:   #5CA4A4;
+    --teal2:  #066FB4;
+    --navy:   #0B2150;
+    --pink:   #FFB4AD;
+  }
+
+  html, body {
+    background: #d8d4ca;
+    font-family: 'DM Sans', sans-serif;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* ── Screen layout: pages side by side ── */
+  .pages-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    padding: 40px;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .page-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .page-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #0B2150;
+    opacity: 0.5;
+  }
+
+  /* iPhone shell */
+  .phone-shell {
+    width: 390px;
+    height: 844px;
+    border-radius: 50px;
+    background: #1a1a1a;
+    padding: 12px;
+    box-shadow:
+      0 0 0 1px #3a3a3a,
+      0 30px 80px rgba(0,0,0,0.45),
+      inset 0 0 0 1px #2a2a2a;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .phone-screen {
+    width: 100%;
+    height: 100%;
+    border-radius: 40px;
+    overflow: hidden;
+    background: var(--cream);
+    position: relative;
+  }
+
+  /* Notch */
+  .phone-shell::before {
+    content: '';
+    position: absolute;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 34px;
+    background: #1a1a1a;
+    border-radius: 20px;
+    z-index: 100;
+  }
+
+  /* ── PRINT ── */
+  @media print {
+    @page { size: A3 landscape; margin: 0.8cm; }
+
+    body { background: white !important; }
+
+    .pages-wrapper {
+      padding: 0;
+      gap: 20px;
+    }
+
+    .page-block {
+      break-inside: avoid;
+    }
+
+    .phone-shell {
+      box-shadow: 0 0 0 2px #333, 0 8px 20px rgba(0,0,0,0.2);
+    }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+
+const TRIPS = [
+  { id:1, name:"Grecia 2025",    place:"Santorini, Grecia",  participants:["Ana","Luis","Marta"], stickersUsed:28, stickersTotal:50, color:"#5CA4A4", emoji:"🏛️" },
+  { id:2, name:"Lisboa con todo",place:"Lisboa, Portugal",   participants:["Tú","Raquel"],        stickersUsed:12, stickersTotal:50, color:"#FA9223", emoji:"🌊" },
+  { id:3, name:"Tokyo dream",    place:"Tokyo, Japón",       participants:["Tú"],                 stickersUsed:5,  stickersTotal:50, color:"#FFB4AD", emoji:"🗼" },
+];
+
+/* ── Mascot ── */
+function Mascot({ size=80, wink=false, handUp=false, color="#0B2150" }) {
+  return (
+    <svg width={size} height={size*1.3} viewBox="0 0 100 130" fill="none">
+      <rect x="38" y="72" width="12" height="35" rx="4" fill={color}/>
+      <rect x="52" y="72" width="12" height="35" rx="4" fill={color}/>
+      <ellipse cx="44" cy="109" rx="10" ry="5" fill={color}/>
+      <ellipse cx="58" cy="109" rx="10" ry="5" fill={color}/>
+      <circle cx="50" cy="42" r="32" fill="white" stroke={color} strokeWidth="3"/>
+      <path d="M72 16 L82 26 L72 26 Z" fill="#EAE7DA" stroke={color} strokeWidth="2" strokeLinejoin="round"/>
+      {wink ? (
+        <>
+          <ellipse cx="42" cy="42" rx="3" ry="4" fill={color}/>
+          <path d="M50 41 Q54 38 58 41" stroke={color} strokeWidth="2.5" strokeLinecap="round" fill="none"/>
+        </>
+      ) : (
+        <>
+          <ellipse cx="42" cy="42" rx="3" ry="4" fill={color}/>
+          <ellipse cx="58" cy="42" rx="3" ry="4" fill={color}/>
+        </>
+      )}
+      {handUp && (
+        <>
+          <line x1="50" y1="80" x2="20" y2="55" stroke={color} strokeWidth="3" strokeLinecap="round"/>
+          <circle cx="16" cy="52" r="5" fill={color}/>
+          <text x="2" y="40" fontSize="18" fill={color} fontWeight="bold" fontFamily="DM Sans,sans-serif">?</text>
+        </>
+      )}
+    </svg>
+  );
+}
+
+/* ── Avatar ── */
+function Avatar({ name, size=32, bg="#5CA4A4" }) {
+  return (
+    <div style={{
+      width:size, height:size, borderRadius:"50%",
+      background:bg, display:"flex", alignItems:"center",
+      justifyContent:"center", fontSize:size*0.38,
+      fontWeight:700, color:"white", flexShrink:0,
+      border:"2px solid white"
+    }}>{name[0].toUpperCase()}</div>
+  );
+}
+
+/* ── StickerBar ── */
+function StickerBar({ used, total }) {
+  const pct = (used/total)*100;
+  return (
+    <div style={{width:"100%"}}>
+      <div style={{display:"flex",justifyContent:"space-between",fontSize:10,color:"#0B2150",opacity:0.6,marginBottom:4}}>
+        <span>{used} puestas</span><span>{total-used} restantes</span>
+      </div>
+      <div style={{height:6,borderRadius:99,background:"#EAE7DA",overflow:"hidden"}}>
+        <div style={{width:`${pct}%`,height:"100%",borderRadius:99,background:"#FA9223"}}/>
+      </div>
+    </div>
+  );
+}
+
+/* ── PeelCorner (top-right) ── */
+function PeelCorner({ color="#5CA4A4" }) {
+  const S = 44;
+  const cid = color.replace('#','');
+  return (
+    <div style={{position:"absolute",top:0,right:0,width:S,height:S,pointerEvents:"none",zIndex:3}}>
+      <svg width={S} height={S} viewBox={`0 0 ${S} ${S}`} fill="none">
+        <defs>
+          <filter id={`ps-${cid}`} x="-30%" y="-30%" width="180%" height="180%">
+            <feDropShadow dx="-2" dy="2" stdDeviation="2.5" floodColor="rgba(0,0,0,0.28)"/>
+          </filter>
+          <linearGradient id={`pg-${cid}`} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#f8f5ee"/>
+            <stop offset="60%" stopColor="#EAE7DA"/>
+            <stop offset="100%" stopColor="#d8d4c6"/>
+          </linearGradient>
+        </defs>
+        <ellipse cx={S*0.62} cy={S*0.38} rx={S*0.32} ry={S*0.18}
+          transform={`rotate(-45 ${S*0.62} ${S*0.38})`} fill="rgba(0,0,0,0.13)"/>
+        <path d={`M${S} 0 L${S} ${S*0.82} L${S*0.18} 0 Z`} fill={`${color}18`}/>
+        <path d={`M${S} 0 L${S} ${S*0.78} Q${S*0.88} ${S*0.5} ${S*0.22} 0 Z`}
+          fill={`url(#pg-${cid})`} filter={`url(#ps-${cid})`}/>
+        <path d={`M${S*0.22} 0 Q${S*0.6} ${S*0.25} ${S} ${S*0.78}`}
+          stroke={color} strokeWidth="0.8" strokeDasharray="3 2" opacity="0.35" fill="none"/>
+        <path d={`M${S*0.96} 0 L${S} 0 L${S} ${S*0.3}`}
+          stroke="rgba(255,255,255,0.6)" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
+      </svg>
+    </div>
+  );
+}
+
+/* ── Hamburger bars ── */
+function HamburgerIcon() {
+  return (
+    <div style={{display:"flex",flexDirection:"column",gap:5,padding:4}}>
+      {[0,1,2].map(i=>(
+        <div key={i} style={{width:24,height:2.5,borderRadius:2,background:"#0B2150"}}/>
+      ))}
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════
+   SCREEN 1 — Home con viajes activos
+   ══════════════════════════════════════════════════ */
+function Screen1() {
+  return (
+    <div style={{width:"100%",height:"100%",background:"#EAE7DA",
+      display:"flex",flexDirection:"column",position:"relative",overflow:"hidden",
+      fontFamily:"'DM Sans',sans-serif"}}>
+      {/* Status bar spacer */}
+      <div style={{height:44}}/>
+      {/* Nav */}
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",
+        padding:"0 18px 14px",flexShrink:0}}>
+        <HamburgerIcon/>
+        <img src="assets/MEMENTO_FRASE.svg" alt="Memento Mundi" style={{height:32,objectFit:"contain"}}/>
+        <Avatar name="Ana" size={36} bg="#066FB4"/>
+      </div>
+      {/* Content */}
+      <div style={{flex:1,overflowY:"hidden",padding:"8px 18px 100px"}}>
+        <p style={{fontSize:13,fontWeight:600,color:"#0B2150",opacity:0.5,
+          letterSpacing:"0.12em",textTransform:"uppercase",marginBottom:16}}>Mis Viajes</p>
+        <div style={{display:"flex",flexDirection:"column",gap:18}}>
+          {TRIPS.map((trip,idx)=>(
+            <div key={trip.id} style={{
+              position:"relative",background:"white",borderRadius:20,
+              padding:"16px 18px",paddingTop:22,
+              boxShadow:`4px 4px 0px ${trip.color}`,
+              border:`2px solid ${trip.color}`,
+              transform:idx%2===0?"rotate(-0.8deg)":"rotate(0.6deg)",
+              overflow:"visible",
+            }}>
+              <PeelCorner color={trip.color}/>
+              <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:12}}>
+                <div style={{width:48,height:48,borderRadius:12,background:trip.color,
+                  display:"flex",alignItems:"center",justifyContent:"center",fontSize:24,flexShrink:0}}>
+                  {trip.emoji}
+                </div>
+                <div style={{flex:1}}>
+                  <p style={{fontWeight:700,fontSize:16,color:"#0B2150",marginBottom:2}}>{trip.name}</p>
+                  <p style={{fontSize:12,color:"#0B2150",opacity:0.55}}>📍 {trip.place}</p>
+                </div>
+              </div>
+              <StickerBar used={trip.stickersUsed} total={trip.stickersTotal}/>
+              <div style={{display:"flex",marginTop:10,alignItems:"center"}}>
+                {trip.participants.map((p,i)=>(
+                  <div key={i} style={{marginLeft:i>0?-8:0}}>
+                    <Avatar name={p} size={26} bg={["#5CA4A4","#FA9223","#FFB4AD","#066FB4"][i%4]}/>
+                  </div>
+                ))}
+                <span style={{marginLeft:10,fontSize:11,color:"#0B2150",opacity:0.5}}>
+                  {trip.participants.join(", ")}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      {/* Mascota ayuda */}
+      <div style={{position:"absolute",bottom:22,left:14,display:"flex",
+        flexDirection:"column",alignItems:"center"}}>
+        <Mascot size={44} handUp={true} color="#0B2150"/>
+        <span style={{fontSize:9,fontWeight:700,color:"#0B2150",opacity:0.45,marginTop:1}}>Ayuda</span>
+      </div>
+      {/* Nuevo Viaje */}
+      <div style={{position:"absolute",bottom:28,right:18}}>
+        <div style={{background:"#FA9223",color:"white",borderRadius:99,
+          padding:"14px 22px",fontWeight:700,fontSize:15,
+          boxShadow:"3px 3px 0px #0B2150",display:"flex",alignItems:"center",gap:8}}>
+          <span style={{fontSize:18}}>+</span> Nuevo Viaje
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════
+   SCREEN 2 — Empty state (sin viajes)
+   ══════════════════════════════════════════════════ */
+function Screen2() {
+  return (
+    <div style={{width:"100%",height:"100%",background:"#EAE7DA",
+      display:"flex",flexDirection:"column",position:"relative",overflow:"hidden",
+      fontFamily:"'DM Sans',sans-serif"}}>
+      <div style={{height:44}}/>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",
+        padding:"0 18px 14px",flexShrink:0}}>
+        <HamburgerIcon/>
+        <img src="assets/MEMENTO_FRASE.svg" alt="Memento Mundi" style={{height:32,objectFit:"contain"}}/>
+        <Avatar name="Ana" size={36} bg="#066FB4"/>
+      </div>
+      <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",
+        justifyContent:"center",padding:"0 32px",gap:20}}>
+        <Mascot size={110} wink={true} color="#0B2150"/>
+        <p style={{fontSize:18,fontWeight:700,color:"#0B2150",
+          textAlign:"center",lineHeight:1.4}}>
+          ¿Aún sigues buscando el{" "}
+          <span style={{color:"#FA9223"}}>"Memento"</span>?
+        </p>
+        <p style={{fontSize:14,color:"#0B2150",opacity:0.5,textAlign:"center",lineHeight:1.5}}>
+          Crea tu primer viaje y empieza<br/>a dejar huella en el mundo 🌍
+        </p>
+        <div style={{background:"#FA9223",color:"white",borderRadius:99,
+          padding:"14px 28px",fontWeight:700,fontSize:15,
+          boxShadow:"3px 3px 0px #0B2150",display:"flex",alignItems:"center",gap:8,
+          marginTop:8}}>
+          <span style={{fontSize:18}}>+</span> Nuevo Viaje
+        </div>
+      </div>
+      <div style={{position:"absolute",bottom:22,left:14,display:"flex",
+        flexDirection:"column",alignItems:"center"}}>
+        <Mascot size={44} handUp={true} color="#0B2150"/>
+        <span style={{fontSize:9,fontWeight:700,color:"#0B2150",opacity:0.45,marginTop:1}}>Ayuda</span>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════
+   SCREEN 3 — Drawer abierto (menú nav)
+   ══════════════════════════════════════════════════ */
+function Screen3() {
+  const NAV = [
+    { label:"Viajes",         icon:"✈️", active:true  },
+    { label:"RRSS",           icon:"🌍", active:false },
+    { label:"Tienda",         icon:"🛒", active:false },
+    { label:"Usuario",        icon:"👤", active:false },
+    { label:"Sobre Nosotros", icon:"💛", active:false },
+  ];
+  return (
+    <div style={{width:"100%",height:"100%",background:"#EAE7DA",
+      display:"flex",position:"relative",overflow:"hidden",
+      fontFamily:"'DM Sans',sans-serif"}}>
+      {/* Blurred home behind */}
+      <div style={{position:"absolute",inset:0,background:"rgba(11,33,80,0.3)",zIndex:1}}/>
+      {/* Drawer panel */}
+      <div style={{
+        position:"absolute",top:0,left:0,bottom:0,width:"82%",
+        background:"#EAE7DA",
+        backgroundImage:"radial-gradient(circle, #0B215010 1px, transparent 1px)",
+        backgroundSize:"18px 18px",
+        borderRadius:"0 28px 28px 0",
+        display:"flex",flexDirection:"column",overflow:"hidden",
+        boxShadow:"6px 0 32px rgba(11,33,80,0.14)",
+        zIndex:2
+      }}>
+        {/* Status bar */}
+        <div style={{height:44}}/>
+        {/* Header */}
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",
+          padding:"0 22px 16px",borderBottom:"2px solid rgba(11,33,80,0.07)"}}>
+          <div style={{display:"flex",alignItems:"center",gap:12}}>
+            <div style={{width:44,height:44,borderRadius:"50%",background:"#066FB4",
+              border:"2.5px solid #0B2150",display:"flex",alignItems:"center",
+              justifyContent:"center",fontWeight:800,fontSize:18,color:"white"}}>A</div>
+            <div>
+              <p style={{color:"#0B2150",fontWeight:800,fontSize:16}}>Ana García</p>
+              <p style={{color:"#0B2150",opacity:0.4,fontSize:11}}>@anaviajera</p>
+            </div>
+          </div>
+          <div style={{background:"#0B215015",borderRadius:"50%",width:32,height:32,
+            display:"flex",alignItems:"center",justifyContent:"center",
+            color:"#0B2150",fontSize:15}}>✕</div>
+        </div>
+        {/* Nav items */}
+        <nav style={{flex:1,padding:"10px 0"}}>
+          {NAV.map((item,idx)=>(
+            <div key={idx} style={{
+              display:"flex",alignItems:"center",gap:14,
+              padding:"14px 22px",
+              background:item.active?"rgba(11,33,80,0.07)":"transparent",
+              borderLeft:item.active?"4px solid #FA9223":"4px solid transparent",
+            }}>
+              <span style={{fontSize:20,lineHeight:1}}>{item.icon}</span>
+              <span style={{
+                fontWeight:item.active?800:600, fontSize:17,
+                color:"#0B2150", opacity:item.active?1:0.65,
+              }}>{item.label}</span>
+              {item.active && (
+                <div style={{marginLeft:"auto",width:8,height:8,
+                  borderRadius:"50%",background:"#FA9223"}}/>
+              )}
+            </div>
+          ))}
+          {/* divider */}
+          <div style={{margin:"8px 22px",height:1.5,background:"rgba(11,33,80,0.08)",borderRadius:1}}/>
+          {/* Ayuda */}
+          <div style={{display:"flex",alignItems:"center",gap:14,padding:"12px 22px"}}>
+            <Mascot size={28} handUp={true} color="#0B2150"/>
+            <span style={{fontWeight:600,fontSize:17,color:"#0B2150",opacity:0.55}}>Ayuda</span>
+          </div>
+        </nav>
+        {/* Footer */}
+        <div style={{padding:"16px 22px 32px",borderTop:"2px solid rgba(11,33,80,0.07)"}}>
+          <div style={{
+            background:"#FA9223",color:"white",borderRadius:99,padding:"15px 22px",
+            fontWeight:800,fontSize:15,boxShadow:"3px 3px 0px #0B2150",
+            display:"flex",alignItems:"center",justifyContent:"center",gap:8
+          }}>
+            <span style={{fontSize:20}}>+</span> Nuevo Viaje
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════
+   APP — render all screens
+   ══════════════════════════════════════════════════ */
+function PrintApp() {
+  const screens = [
+    { id:"s1", label:"Home — Con viajes activos",    component:<Screen1/> },
+    { id:"s2", label:"Home — Sin viajes (empty state)", component:<Screen2/> },
+    { id:"s3", label:"Menú hamburguesa abierto",     component:<Screen3/> },
+  ];
+
+  return (
+    <div className="pages-wrapper">
+      {screens.map(s => (
+        <div key={s.id} className="page-block">
+          <p className="page-label">{s.label}</p>
+          <div className="phone-shell">
+            <div className="phone-screen">
+              {s.component}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<PrintApp/>);
+
+// Auto-print after fonts + babel load
+setTimeout(() => {
+  document.fonts.ready.then(() => {
+    setTimeout(() => window.print(), 500);
+  });
+}, 800);
+
+</script>
+</body>
+</html>

@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MementoMundi — Ayuda (Responsive)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; min-height: 100%; background: #EAE7DA; }
+  body { font-family: 'Nunito', sans-serif; color: #0B2150; }
+
+  :root {
+    --cream:  #EAE7DA;
+    --cream2: #f3f0e3;
+    --pink:   #FFB4AD;
+    --orange: #FA9223;
+    --teal:   #5CA4A4;
+    --teal2:  #066FB4;
+    --navy:   #0B2150;
+    --white:  #FFFFFF;
+    --green:  #4FB477;
+  }
+
+  .f-brasica { font-family: 'Playfair Display', serif; }
+  .f-grown   { font-family: 'Nunito', sans-serif; }
+
+  .mm-scroll::-webkit-scrollbar { height: 0; width: 0; }
+  .mm-scroll { scrollbar-width: none; }
+
+  .mm-icon-btn { transition: background .15s, transform .15s; }
+  .mm-icon-btn:hover { background: rgba(11,33,80,0.12) !important; transform: scale(1.06); }
+  .mm-avatar { transition: transform .15s; cursor: pointer; }
+  .mm-avatar:hover { transform: scale(1.08); }
+  .mm-nav-item { transition: background .15s, padding-left .15s; cursor: pointer; }
+  .mm-nav-item:hover { background: rgba(11,33,80,0.05) !important; padding-left: 26px !important; }
+
+  .sticker {
+    background: white;
+    border: 2.5px solid #0B2150;
+    border-radius: 18px;
+    box-shadow: 4px 4px 0 #0B2150;
+    transition: transform .25s cubic-bezier(.2,.7,.2,1), box-shadow .2s;
+  }
+  .sticker:hover {
+    transform: translate(-1px,-1px) rotate(0deg) !important;
+    box-shadow: 6px 6px 0 #0B2150;
+  }
+  .sticker:active {
+    transform: translate(2px,2px);
+    box-shadow: 1px 1px 0 #0B2150;
+  }
+
+  /* hero / search */
+  .hero-bg {
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(255,180,173,0.18) 0, transparent 35%),
+      radial-gradient(circle at 80% 70%, rgba(92,164,164,0.18) 0, transparent 35%),
+      radial-gradient(circle, rgba(11,33,80,0.06) 1px, transparent 1px);
+    background-size: auto, auto, 22px 22px;
+    pointer-events: none;
+  }
+  .search-box {
+    background: white;
+    border: 3px solid #0B2150;
+    border-radius: 99px;
+    box-shadow: 5px 5px 0 #0B2150;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px 14px 22px;
+    transition: box-shadow .2s, transform .2s;
+  }
+  .search-box:focus-within {
+    box-shadow: 7px 7px 0 #FA9223;
+    transform: translate(-1px,-1px);
+  }
+  .search-box input {
+    border: none; outline: none; background: transparent;
+    flex: 1; font-family: 'Nunito', sans-serif;
+    font-size: 17px; font-weight: 600; color: #0B2150;
+    min-width: 0;
+  }
+  .search-box input::placeholder { color: rgba(11,33,80,0.4); font-weight:500; }
+
+  .search-sticky-wrap {
+    position: sticky;
+    top: 64px;
+    z-index: 9;
+    padding: 14px clamp(14px, 4vw, 28px) 8px;
+    background: linear-gradient(to bottom, #EAE7DA 80%, rgba(234,231,218,0));
+  }
+
+  /* FAQ */
+  .ticket {
+    background: var(--cream2);
+    border: 2.5px solid #0B2150;
+    border-radius: 14px;
+    box-shadow: 3px 3px 0 #0B2150;
+    overflow: hidden;
+    position: relative;
+  }
+  .ticket summary {
+    list-style: none; cursor: pointer;
+    padding: 18px 20px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700; font-size: 16px; color: #0B2150;
+    transition: background .15s;
+  }
+  .ticket summary::-webkit-details-marker { display: none; }
+  .ticket summary:hover { background: rgba(11,33,80,0.04); }
+  .ticket .q-chev {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: #0B2150; color: #EAE7DA;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 16px; flex-shrink: 0;
+    transition: transform .25s, background .25s;
+  }
+  .ticket[open] .q-chev { transform: rotate(45deg); background: #FA9223; }
+  .ticket .ticket-divider {
+    border-top: 2px dotted rgba(11,33,80,0.45);
+    margin: 0 16px;
+    position: relative;
+  }
+  .ticket .ticket-divider::before,
+  .ticket .ticket-divider::after {
+    content: "";
+    position: absolute; top: -10px;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: #EAE7DA; border: 2.5px solid #0B2150;
+  }
+  .ticket .ticket-divider::before { left: -27px; }
+  .ticket .ticket-divider::after  { right: -27px; }
+  .ticket .answer {
+    padding: 16px 20px 22px;
+    font-size: 14.5px; line-height: 1.6;
+    color: rgba(11,33,80,0.78);
+  }
+
+  /* video */
+  .video-card {
+    flex-shrink: 0;
+    width: 200px;
+    aspect-ratio: 9 / 16;
+    border-radius: 18px;
+    border: 2.5px solid #0B2150;
+    box-shadow: 4px 4px 0 #0B2150;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    transition: transform .25s, box-shadow .2s;
+  }
+  .video-card:hover {
+    transform: translate(-1px,-1px);
+    box-shadow: 6px 6px 0 #0B2150;
+  }
+  .video-card .play-pill {
+    position: absolute; left: 12px; bottom: 12px;
+    background: rgba(11,33,80,0.85);
+    color: #EAE7DA;
+    border-radius: 99px;
+    padding: 6px 11px 6px 9px;
+    font-size: 11px; font-weight: 800;
+    display: flex; align-items: center; gap: 5px;
+    backdrop-filter: blur(6px);
+  }
+  .video-card .duration {
+    position: absolute; right: 10px; top: 10px;
+    background: rgba(11,33,80,0.7); color: white;
+    border-radius: 8px; padding: 2px 7px;
+    font-size: 10px; font-weight: 800; letter-spacing: 0.04em;
+  }
+  .video-card .vtitle {
+    position: absolute; left: 12px; right: 12px; bottom: 44px;
+    color: white;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700; font-size: 15px; line-height: 1.2;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  }
+
+  /* contact tile */
+  .contact-tile {
+    border: 2.5px solid #0B2150;
+    border-radius: 16px;
+    padding: 22px 16px;
+    box-shadow: 3px 3px 0 #0B2150;
+    cursor: pointer;
+    transition: transform .15s, box-shadow .2s;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    text-align: center;
+  }
+  .contact-tile:hover {
+    transform: translate(-1px,-1px);
+    box-shadow: 5px 5px 0 #0B2150;
+  }
+  .contact-tile .icon-circle {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: rgba(255,255,255,0.45);
+    display: flex; align-items: center; justify-content: center;
+    border: 2px solid #0B2150;
+  }
+
+  /* status dot */
+  .status-dot {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 0 0 rgba(79,180,119,0.6);
+    animation: pulse 2.2s infinite;
+  }
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(79,180,119,0.55); }
+    70%  { box-shadow: 0 0 0 8px rgba(79,180,119,0); }
+    100% { box-shadow: 0 0 0 0 rgba(79,180,119,0); }
+  }
+
+  .mm-btn-primary { transition: transform .15s, box-shadow .15s, background .15s; }
+  .mm-btn-primary:hover {
+    transform: translate(-1px,-1px);
+    box-shadow: 5px 5px 0px #0B2150 !important;
+    background: #FB9F36 !important;
+  }
+  .mm-btn-primary:active { transform: translate(2px,2px); box-shadow: 1px 1px 0px #0B2150 !important; }
+
+  /* drawer */
+  .drawer-backdrop {
+    position: fixed; inset: 0; z-index: 50;
+    background: rgba(11,33,80,0.35);
+  }
+  .drawer-panel {
+    position: fixed; top: 0; left: 0; bottom: 0;
+    width: min(82%, 320px);
+    background: #EAE7DA;
+    background-image: radial-gradient(circle, #0B215010 1px, transparent 1px);
+    background-size: 18px 18px;
+    border-radius: 0 28px 28px 0;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    box-shadow: 6px 0 32px rgba(11,33,80,0.14);
+    z-index: 51;
+  }
+
+  /* ============ LAYOUT BREAKPOINTS ============ */
+  /* default mobile: cat-grid 1 col */
+  .cat-grid { display: grid; grid-template-columns: 1fr; gap: 18px; }
+
+  /* tablet ≥ 720px */
+  @media (min-width: 720px) {
+    .cat-grid { grid-template-columns: 1fr 1fr; gap: 22px; }
+    .contact-grid { grid-template-columns: repeat(3, 1fr) !important; }
+  }
+
+  /* desktop ≥ 1080px — sidebar visible, cat-grid 3 cols */
+  @media (min-width: 1080px) {
+    .cat-grid { grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .desktop-shell { display: grid !important; grid-template-columns: 240px minmax(0, 1fr); gap: 36px; }
+    .desktop-sidebar { display: flex !important; }
+    .hero-block { text-align: left !important; }
+    .hero-block .hero-h1 { font-size: clamp(48px, 5vw, 64px) !important; }
+    .search-box { padding: 18px 26px !important; }
+    .search-box input { font-size: 18px !important; }
+  }
+
+  @media (min-width: 1320px) {
+    .cat-grid { gap: 28px; }
+  }
+
+  /* sidebar (hidden by default) */
+  .desktop-sidebar {
+    display: none;
+    position: sticky;
+    top: 90px;
+    align-self: start;
+    flex-direction: column;
+    gap: 6px;
+    padding: 22px 16px;
+    background: white;
+    border: 2.5px solid #0B2150;
+    border-radius: 18px;
+    box-shadow: 4px 4px 0 #0B2150;
+    height: fit-content;
+  }
+  .sidebar-link {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: #0B2150;
+    font-weight: 700;
+    font-size: 14px;
+    transition: background .15s, color .15s;
+    cursor: pointer;
+  }
+  .sidebar-link:hover { background: rgba(11,33,80,0.06); }
+  .sidebar-link.active { background: #FA922315; color: #FA9223; }
+  .sidebar-link.active::before {
+    content: ""; width: 4px; height: 16px; border-radius: 2px;
+    background: #FA9223; flex-shrink: 0;
+  }
+  .sidebar-link .num {
+    font-family: 'Playfair Display', serif;
+    font-size: 11px; font-weight: 800;
+    opacity: 0.5; letter-spacing: 0.12em;
+    flex-shrink: 0;
+  }
+</style>
+</head>
+<body>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+/* ---------------- Mascot ---------------- */
+function Mascot({ size=80, wink=false, handUp=false, color="#0B2150" }) {
+  return (
+    <svg width={size} height={size*1.3} viewBox="0 0 100 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="38" y="72" width="12" height="35" rx="4" fill={color}/>
+      <rect x="52" y="72" width="12" height="35" rx="4" fill={color}/>
+      <ellipse cx="44" cy="109" rx="10" ry="5" fill={color}/>
+      <ellipse cx="58" cy="109" rx="10" ry="5" fill={color}/>
+      <circle cx="50" cy="42" r="32" fill="white" stroke={color} strokeWidth="3"/>
+      <path d="M72 16 L82 26 L72 26 Z" fill="#EAE7DA" stroke={color} strokeWidth="2" strokeLinejoin="round"/>
+      {wink ? (
+        <>
+          <ellipse cx="42" cy="42" rx="3" ry="4" fill={color}/>
+          <path d="M50 41 Q54 38 58 41" stroke={color} strokeWidth="2.5" strokeLinecap="round" fill="none"/>
+        </>
+      ) : (
+        <>
+          <ellipse cx="42" cy="42" rx="3" ry="4" fill={color}/>
+          <ellipse cx="58" cy="42" rx="3" ry="4" fill={color}/>
+        </>
+      )}
+      {handUp && (
+        <>
+          <line x1="50" y1="80" x2="20" y2="55" stroke={color} strokeWidth="3" strokeLinecap="round"/>
+          <circle cx="16" cy="52" r="5" fill={color}/>
+          <text x="2" y="40" fontSize="18" fill={color} fontWeight="bold" fontFamily="Nunito, sans-serif">?</text>
+        </>
+      )}
+    </svg>
+  );
+}
+
+function Avatar({ name, size=32, bg="#5CA4A4" }) {
+  return (
+    <div style={{
+      width:size, height:size, borderRadius:"50%",
+      background:bg, display:"flex", alignItems:"center",
+      justifyContent:"center", fontSize:size*0.38,
+      fontWeight:700, color:"white", flexShrink:0,
+      border:"2px solid white"
+    }}>{name[0].toUpperCase()}</div>
+  );
+}
+
+/* ---- Custom category icons ---- */
+const IconBox = ({ accent="#FA9223" }) => (
+  <svg viewBox="0 0 64 64" width="44" height="44" fill="none" stroke="#0B2150" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M10 22 L32 12 L54 22 L54 48 L32 58 L10 48 Z" fill={accent} fillOpacity="0.25"/>
+    <path d="M10 22 L32 32 L54 22"/>
+    <path d="M32 32 L32 58"/>
+    <path d="M21 17 L43 27" strokeDasharray="2 3"/>
+  </svg>
+);
+const IconQR = ({ accent="#5CA4A4" }) => (
+  <svg viewBox="0 0 64 64" width="44" height="44" fill="none" stroke="#0B2150" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="9" y="9"  width="18" height="18" rx="3" fill={accent} fillOpacity="0.25"/>
+    <rect x="37" y="9" width="18" height="18" rx="3" fill={accent} fillOpacity="0.25"/>
+    <rect x="9" y="37" width="18" height="18" rx="3" fill={accent} fillOpacity="0.25"/>
+    <rect x="15" y="15" width="6" height="6" fill="#0B2150"/>
+    <rect x="43" y="15" width="6" height="6" fill="#0B2150"/>
+    <rect x="15" y="43" width="6" height="6" fill="#0B2150"/>
+    <path d="M37 37 L42 37 M37 43 L37 49 M44 41 L48 41 L48 47 M53 53 L55 53 M44 55 L46 55"/>
+  </svg>
+);
+const IconBook = ({ accent="#FFB4AD" }) => (
+  <svg viewBox="0 0 64 64" width="44" height="44" fill="none" stroke="#0B2150" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M10 12 L32 16 L32 56 L10 52 Z" fill={accent} fillOpacity="0.4"/>
+    <path d="M54 12 L32 16 L32 56 L54 52 Z" fill="white"/>
+    <path d="M16 24 L26 26 M16 32 L26 34 M16 40 L26 42"/>
+    <path d="M38 26 L48 24 M38 34 L48 32"/>
+    <circle cx="44" cy="44" r="5" fill={accent}/>
+  </svg>
+);
+const IconCard = ({ accent="#066FB4" }) => (
+  <svg viewBox="0 0 64 64" width="44" height="44" fill="none" stroke="#0B2150" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="8" y="16" width="48" height="34" rx="4" fill={accent} fillOpacity="0.22"/>
+    <path d="M8 26 L56 26" strokeWidth="3"/>
+    <rect x="13" y="34" width="14" height="8" rx="1.5" fill="#0B2150"/>
+    <path d="M34 38 L48 38 M34 44 L44 44"/>
+  </svg>
+);
+const IconBrush = ({ accent="#FA9223" }) => (
+  <svg viewBox="0 0 64 64" width="44" height="44" fill="none" stroke="#0B2150" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M40 10 L54 24 L30 48 C26 52 18 52 14 48 C10 44 10 36 14 32 Z" fill={accent} fillOpacity="0.3"/>
+    <path d="M40 10 L54 24"/>
+    <circle cx="20" cy="42" r="3" fill="#0B2150"/>
+    <path d="M46 16 L50 12" strokeDasharray="2 2"/>
+    <path d="M28 6 L30 10 M14 14 L18 14 M50 4 L52 8" strokeDasharray="2 2"/>
+  </svg>
+);
+const IconChat = ({ accent="#5CA4A4" }) => (
+  <svg viewBox="0 0 64 64" width="44" height="44" fill="none" stroke="#0B2150" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M10 14 L46 14 Q52 14 52 20 L52 38 Q52 44 46 44 L26 44 L16 54 L16 44 Q10 44 10 38 Z" fill={accent} fillOpacity="0.3"/>
+    <circle cx="22" cy="29" r="2.2" fill="#0B2150"/>
+    <circle cx="31" cy="29" r="2.2" fill="#0B2150"/>
+    <circle cx="40" cy="29" r="2.2" fill="#0B2150"/>
+  </svg>
+);
+
+const IconSearch = ({ size=22, color="#0B2150", strokeW=2.6 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeW} strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="11" cy="11" r="7"/><path d="M20 20 L16 16"/>
+  </svg>
+);
+const IconPlay = ({ size=14, color="#EAE7DA" }) => (
+  <svg width={size} height={size} viewBox="0 0 16 16" fill={color}>
+    <path d="M3 2 L13 8 L3 14 Z"/>
+  </svg>
+);
+const IconBubble = ({ size=30, color="#0B2150" }) => (
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" stroke={color} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M5 8 L24 8 Q28 8 28 12 L28 21 Q28 25 24 25 L14 25 L8 30 L8 25 Q5 25 5 22 Z"/>
+  </svg>
+);
+const IconMail = ({ size=30, color="#0B2150" }) => (
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" stroke={color} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="7" width="26" height="18" rx="2.5"/>
+    <path d="M3 9 L16 19 L29 9"/>
+  </svg>
+);
+const IconWhats = ({ size=30, color="#0B2150" }) => (
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none" stroke={color} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M16 4 C9 4 4 9 4 16 C4 18.5 4.7 20.7 6 22.7 L4.5 28 L10 26.5 C12 27.5 14 28 16 28 C23 28 28 23 28 16 C28 9 23 4 16 4 Z"/>
+    <path d="M11 13 Q11 11 13 11 L13.5 11 Q14.2 11 14.4 11.5 L15 13.2 Q15.2 13.7 14.8 14.1 L14 15 Q15 17 17 18 L17.9 17.2 Q18.3 16.8 18.8 17 L20.5 17.6 Q21 17.8 21 18.5 L21 19 Q21 21 19 21 Q14 21 11 16 Q11 14 11 13 Z"/>
+  </svg>
+);
+
+/* ---------- DATA ---------- */
+const CATEGORIES = [
+  { id:"pedidos",  title:"Pedidos y envíos",   sub:"Estado, plazos, devoluciones",   icon:<IconBox accent="#FA9223"/>,   bg:"#FFE7CC", rot:-2.5 },
+  { id:"qr",       title:"Cómo funciona el QR", sub:"Escanear y vincular pegatinas",  icon:<IconQR accent="#5CA4A4"/>,    bg:"#D6ECEC", rot: 1.8 },
+  { id:"book",     title:"Mi scrapbook",        sub:"Crear, editar y compartir",      icon:<IconBook accent="#FFB4AD"/>,  bg:"#FFE0DC", rot:-1.2 },
+  { id:"cuenta",   title:"Cuenta y pagos",      sub:"Login, métodos, facturas",       icon:<IconCard accent="#066FB4"/>,  bg:"#D6E4F5", rot: 2.3 },
+  { id:"perso",    title:"Personalización",     sub:"Diseña tu pack a medida",        icon:<IconBrush accent="#FA9223"/>, bg:"#FFEFD9", rot:-2.0 },
+  { id:"contacto", title:"Contacto",            sub:"Habla con nuestro equipo",       icon:<IconChat accent="#5CA4A4"/>,  bg:"#E2F1F1", rot: 1.4 },
+];
+
+const FAQS = [
+  { q:"¿Cuánto tarda en llegar mi pedido?",          a:"Los envíos estándar tardan entre 3 y 5 días laborables en península, 5-7 en Baleares y Canarias. Te enviamos un correo con el número de seguimiento en cuanto sale del almacén." },
+  { q:"¿Cómo escaneo una pegatina por primera vez?", a:"Abre la cámara del móvil sobre el QR de la pegatina (o usa la app), pulsa el enlace y vincúlala a un viaje existente o crea uno nuevo. Ya está, ya cuenta dentro de tu scrapbook." },
+  { q:"¿Puedo añadir más participantes a un viaje?", a:"Sí. Desde el detalle del viaje toca «Compartir» y envía el enlace o invita por email. Pueden subir fotos, comentarios y escanear pegatinas también." },
+  { q:"¿Las pegatinas son resistentes al agua?",     a:"Las pegatinas estándar tienen laminado mate impermeable, aguantan lluvia y golpes. La línea «kraft» es papel y no se recomienda para exterior." },
+  { q:"¿Cómo cambio mi método de pago?",             a:"Entra en Perfil → Cuenta y pagos → Métodos de pago. Puedes añadir tarjeta, Bizum o PayPal y marcar uno como preferido." },
+  { q:"¿Puedo devolver un pack si no me gusta?",     a:"Tienes 14 días desde la recepción para devolverlo, siempre que no hayas activado ninguna pegatina. Te reembolsamos en el mismo método de pago en 3-5 días." },
+  { q:"¿Qué hago si pierdo una pegatina?",           a:"Si la pegatina aún no estaba activada, no pasa nada — siguen funcionando hasta que las escanees. Si ya estaba vinculada, escríbenos y la regeneramos en tu cuenta." },
+  { q:"¿Puedo personalizar el diseño de mi pack?",   a:"Claro: en Tienda → Personaliza tu pack puedes elegir colores, ilustraciones y añadir tu nombre. Los packs custom tardan 2-3 días extra en preparación." },
+  { q:"¿Cómo descargo mi scrapbook en PDF?",         a:"Desde el detalle del viaje pulsa el icono de descarga arriba a la derecha y elige formato PDF. Se generará en unos segundos y lo recibirás por correo." },
+];
+
+const VIDEOS = [
+  { id:1, title:"Cómo escanear tu primera pegatina", duration:"0:42", bg:"linear-gradient(160deg, #FFB4AD 0%, #FA9223 100%)" },
+  { id:2, title:"Personalizar tu pack en 60 seg",     duration:"1:05", bg:"linear-gradient(160deg, #5CA4A4 0%, #066FB4 100%)" },
+  { id:3, title:"Crea tu primer viaje",               duration:"0:38", bg:"linear-gradient(160deg, #FA9223 0%, #0B2150 100%)" },
+  { id:4, title:"Invita a tus compis al scrapbook",   duration:"0:51", bg:"linear-gradient(160deg, #FFB4AD 0%, #066FB4 100%)" },
+  { id:5, title:"Descarga tu álbum en PDF",           duration:"0:33", bg:"linear-gradient(160deg, #5CA4A4 0%, #FFB4AD 100%)" },
+];
+
+const SECTIONS = [
+  { id:"cats",    num:"01", label:"Categorías" },
+  { id:"faq",     num:"02", label:"FAQ destacadas" },
+  { id:"videos",  num:"03", label:"Tutoriales" },
+  { id:"contact", num:"04", label:"Contáctanos" },
+  { id:"status",  num:"05", label:"Estado del servicio" },
+];
+
+const NAV_ITEMS = [
+  { label:"Viajes",         icon:"✈️",  active:false, href:"MementoMundi Home.html" },
+  { label:"RRSS",           icon:"🌍",  active:false, href:"MementoMundi RRSS.html" },
+  { label:"Tienda",         icon:"🛒",  active:false, href:"MementoMundi Tienda.html" },
+  { label:"Favoritos",      icon:"❤️",  active:false },
+  { label:"Carrito",        icon:"🧺",  active:false },
+  { label:"Usuario",        icon:"👤",  active:false },
+  { label:"Sobre Nosotros", icon:"💛",  active:false },
+];
+
+/* =========================================================
+   AYUDA RESPONSIVE
+   ========================================================= */
+function AyudaResponsive() {
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const [openFaq, setOpenFaq] = useState(0);
+  const [activeSection, setActiveSection] = useState("cats");
+  const carouselRef = useRef(null);
+
+  const filteredFaqs = FAQS.filter(f =>
+    !search ||
+    f.q.toLowerCase().includes(search.toLowerCase()) ||
+    f.a.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const scrollVid = (dir) => {
+    const el = carouselRef.current;
+    if (!el) return;
+    el.scrollBy({ left: dir * 220, behavior: "smooth" });
+  };
+
+  const goSection = (id) => {
+    setActiveSection(id);
+    const el = document.getElementById(`sec-${id}`);
+    if (el) {
+      const y = el.getBoundingClientRect().top + window.scrollY - 120;
+      window.scrollTo({ top: y, behavior: "smooth" });
+    }
+  };
+
+  // active section tracker (intersection-ish)
+  useEffect(() => {
+    const onScroll = () => {
+      let current = "cats";
+      for (const s of SECTIONS) {
+        const el = document.getElementById(`sec-${s.id}`);
+        if (!el) continue;
+        const rect = el.getBoundingClientRect();
+        if (rect.top < 200) current = s.id;
+      }
+      setActiveSection(current);
+    };
+    window.addEventListener("scroll", onScroll, { passive:true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  return (
+    <div style={{
+      minHeight:"100vh", width:"100%",
+      background:"#EAE7DA",
+      display:"flex", flexDirection:"column",
+      position:"relative", fontFamily:"'Nunito', sans-serif"
+    }}>
+
+      {/* TOP NAV */}
+      <header style={{
+        display:"flex", alignItems:"center", justifyContent:"space-between",
+        padding:"14px clamp(14px, 4vw, 32px)",
+        background:"rgba(234,231,218,0.92)",
+        backdropFilter:"blur(12px)",
+        WebkitBackdropFilter:"blur(12px)",
+        zIndex:20, flexShrink:0,
+        position:"sticky", top:0,
+        borderBottom:"1.5px solid rgba(11,33,80,0.06)"
+      }}>
+        <button onClick={()=>setDrawerOpen(true)} className="mm-icon-btn" style={{
+          background:"none", border:"none", cursor:"pointer",
+          display:"flex", flexDirection:"column", gap:5, padding:6, borderRadius:8
+        }}>
+          {[0,1,2].map(i=>(
+            <div key={i} style={{width:24,height:2.5,borderRadius:2,background:"#0B2150"}}/>
+          ))}
+        </button>
+        <img src="assets/MEMENTO_FRASE.svg" alt="Memento Mundi"
+          style={{height:32, objectFit:"contain", maxWidth:"40vw"}}/>
+        <div className="mm-avatar">
+          <Avatar name="Ana" size={36} bg="#066FB4"/>
+        </div>
+      </header>
+
+      {/* HERO */}
+      <section style={{
+        position:"relative",
+        padding:"clamp(28px, 6vw, 64px) clamp(16px,4vw,48px) 12px",
+        textAlign:"center",
+        maxWidth:1400, margin:"0 auto", width:"100%"
+      }} className="hero-block">
+        <div className="hero-bg"/>
+        <p style={{
+          fontFamily:"'Playfair Display',serif",
+          fontSize:11, fontWeight:700, color:"#0B2150",
+          opacity:0.45, letterSpacing:"0.22em",
+          textTransform:"uppercase", marginBottom:14,
+          position:"relative"
+        }}>· Centro de ayuda ·</p>
+        <h1 className="f-brasica hero-h1" style={{
+          fontSize:"clamp(34px, 7vw, 52px)",
+          fontWeight:900, color:"#0B2150",
+          lineHeight:1.05, letterSpacing:"-0.02em",
+          marginBottom:6, position:"relative"
+        }}>
+          ¿En qué te <span style={{color:"#FA9223", fontStyle:"italic"}}>echamos</span> una mano?
+        </h1>
+        <p style={{
+          fontSize:"clamp(13px, 1.6vw, 16px)", color:"#0B2150", opacity:0.55,
+          marginTop:12, position:"relative", maxWidth:540
+        }}>Resolvemos tus dudas en segundos. Busca abajo o explora las categorías.</p>
+      </section>
+
+      {/* STICKY SEARCH */}
+      <div className="search-sticky-wrap">
+        <div style={{maxWidth:760, margin:"0 auto"}}>
+          <div className="search-box">
+            <IconSearch size={22}/>
+            <input
+              type="text"
+              placeholder="Busca tu duda..."
+              value={search}
+              onChange={(e)=>setSearch(e.target.value)}
+            />
+            {search && (
+              <button onClick={()=>setSearch("")} style={{
+                border:"none", background:"#0B2150", color:"#EAE7DA",
+                borderRadius:99, width:26, height:26, cursor:"pointer",
+                display:"flex", alignItems:"center", justifyContent:"center",
+                fontSize:13, fontWeight:800, flexShrink:0
+              }}>✕</button>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* DESKTOP SHELL: sidebar + content */}
+      <div style={{ width:"100%", maxWidth:1400, margin:"0 auto", padding:"22px clamp(14px,4vw,48px) 100px" }}>
+        <div className="desktop-shell" style={{display:"block"}}>
+
+          {/* Sidebar (desktop only) */}
+          <aside className="desktop-sidebar">
+            <p className="f-brasica" style={{
+              fontSize:11, fontWeight:700, color:"#0B2150", opacity:0.45,
+              letterSpacing:"0.18em", textTransform:"uppercase",
+              marginBottom:10, padding:"0 12px"
+            }}>En esta página</p>
+            {SECTIONS.map(s => (
+              <a key={s.id}
+                onClick={()=>goSection(s.id)}
+                className={`sidebar-link ${activeSection===s.id ? "active" : ""}`}>
+                <span className="num">{s.num}</span>
+                <span style={{flex:1}}>{s.label}</span>
+              </a>
+            ))}
+            <div style={{margin:"10px 6px",height:1.5,background:"rgba(11,33,80,0.08)"}}/>
+            <div style={{
+              padding:"8px 12px",
+              display:"flex", alignItems:"center", gap:10
+            }}>
+              <span className="status-dot"/>
+              <p style={{fontSize:12, color:"#0B2150", fontWeight:700, opacity:0.7}}>Servicio operativo</p>
+            </div>
+          </aside>
+
+          {/* Main column */}
+          <main>
+
+            {/* CATEGORIES */}
+            <div id="sec-cats">
+              <SectionLabel idx="01" label="Categorías rápidas" sub="Elige el tema y vamos directos al grano" />
+              <div className="cat-grid" style={{ marginTop:22, marginBottom:48 }}>
+                {CATEGORIES.map((cat) => (
+                  <a key={cat.id} href="#" onClick={(e)=>e.preventDefault()}
+                    className="sticker"
+                    style={{
+                      background: cat.bg,
+                      padding:"18px 18px 16px",
+                      display:"flex", alignItems:"center", gap:14,
+                      textDecoration:"none",
+                      transform:`rotate(${cat.rot}deg)`,
+                      cursor:"pointer"
+                    }}
+                  >
+                    <div style={{
+                      width:64, height:64, borderRadius:14,
+                      background:"white",
+                      border:"2.5px solid #0B2150",
+                      display:"flex", alignItems:"center", justifyContent:"center",
+                      flexShrink:0
+                    }}>
+                      {cat.icon}
+                    </div>
+                    <div style={{flex:1, minWidth:0}}>
+                      <p className="f-brasica" style={{
+                        fontSize:17, fontWeight:900, color:"#0B2150",
+                        lineHeight:1.15, marginBottom:3
+                      }}>{cat.title}</p>
+                      <p style={{
+                        fontSize:12, color:"#0B2150", opacity:0.65,
+                        fontWeight:600
+                      }}>{cat.sub}</p>
+                    </div>
+                    <div style={{
+                      fontSize:18, color:"#0B2150", opacity:0.55,
+                      fontWeight:800, paddingRight:4
+                    }}>→</div>
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            {/* FAQ */}
+            <div id="sec-faq">
+              <SectionLabel idx="02" label="Preguntas frecuentes" sub={`${filteredFaqs.length} de ${FAQS.length} resultados`} />
+              <div style={{display:"flex", flexDirection:"column", gap:14, marginTop:22, marginBottom:48, maxWidth:820}}>
+                {filteredFaqs.length === 0 && (
+                  <div className="ticket" style={{padding:"22px", textAlign:"center"}}>
+                    <p className="f-brasica" style={{fontSize:17, fontWeight:700, color:"#0B2150"}}>Sin resultados</p>
+                    <p style={{fontSize:13, color:"#0B2150", opacity:0.55, marginTop:6}}>
+                      Prueba con otras palabras o pídenos ayuda abajo.
+                    </p>
+                  </div>
+                )}
+                {filteredFaqs.map((faq, idx) => (
+                  <details key={idx} className="ticket" open={openFaq === idx} onToggle={(e)=>{
+                    if (e.target.open) setOpenFaq(idx);
+                    else if (openFaq === idx) setOpenFaq(-1);
+                  }}>
+                    <summary>
+                      <span style={{flex:1}}>{faq.q}</span>
+                      <span className="q-chev">+</span>
+                    </summary>
+                    <div className="ticket-divider"/>
+                    <div className="answer">{faq.a}</div>
+                  </details>
+                ))}
+              </div>
+            </div>
+
+            {/* VIDEOS */}
+            <div id="sec-videos">
+              <SectionLabel idx="03" label="Tutoriales en vídeo" sub="Cápsulas de 1 minuto" rightAction={
+                <div style={{display:"flex", gap:6}}>
+                  <button onClick={()=>scrollVid(-1)} className="mm-icon-btn" style={{
+                    border:"2px solid #0B2150", background:"white",
+                    borderRadius:"50%", width:36, height:36, cursor:"pointer",
+                    display:"flex", alignItems:"center", justifyContent:"center",
+                    color:"#0B2150", fontWeight:800, fontSize:16
+                  }}>‹</button>
+                  <button onClick={()=>scrollVid(1)} className="mm-icon-btn" style={{
+                    border:"2px solid #0B2150", background:"white",
+                    borderRadius:"50%", width:36, height:36, cursor:"pointer",
+                    display:"flex", alignItems:"center", justifyContent:"center",
+                    color:"#0B2150", fontWeight:800, fontSize:16
+                  }}>›</button>
+                </div>
+              }/>
+              <div ref={carouselRef} className="mm-scroll" style={{
+                display:"flex", gap:18, overflowX:"auto",
+                scrollSnapType:"x mandatory",
+                padding:"24px 4px 22px",
+                marginLeft:-4, marginRight:-4,
+                marginBottom:48
+              }}>
+                {VIDEOS.map((v) => (
+                  <div key={v.id} className="video-card" style={{ background:v.bg, scrollSnapAlign:"start" }}>
+                    <svg viewBox="0 0 200 360" preserveAspectRatio="xMidYMid slice" style={{position:"absolute",inset:0,opacity:0.35}}>
+                      <circle cx="50"  cy="70"  r="55" fill="white"/>
+                      <circle cx="155" cy="140" r="38" fill="white" opacity="0.6"/>
+                      <circle cx="70"  cy="260" r="70" fill="white" opacity="0.4"/>
+                    </svg>
+                    <div className="duration">{v.duration}</div>
+                    <div className="vtitle">{v.title}</div>
+                    <div className="play-pill">
+                      <IconPlay size={11}/>
+                      <span>VER</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* CONTACT */}
+            <div id="sec-contact">
+              <SectionLabel idx="04" label="¿Aún necesitas ayuda?" sub="Estamos a un mensaje" />
+              <div className="sticker" style={{
+                background:"white",
+                padding:"clamp(18px, 3vw, 28px)",
+                marginTop:22, marginBottom:32,
+                borderRadius:24,
+                maxWidth:820
+              }}>
+                <div style={{
+                  display:"flex", alignItems:"flex-start", gap:18,
+                  marginBottom:22, flexWrap:"wrap"
+                }}>
+                  <Mascot size={64} wink={true} handUp={false} color="#0B2150"/>
+                  <div style={{flex:1, paddingTop:6, minWidth:200}}>
+                    <p className="f-brasica" style={{
+                      fontSize:"clamp(18px, 2.2vw, 22px)", fontWeight:900, color:"#0B2150",
+                      lineHeight:1.15, marginBottom:6
+                    }}>Si seguimos sin aclararte la duda...</p>
+                    <p style={{fontSize:14, color:"#0B2150", opacity:0.65, lineHeight:1.5}}>
+                      Escríbenos por donde te apetezca. Solemos contestar en menos de 2 horas en horario laboral.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="contact-grid" style={{
+                  display:"grid",
+                  gridTemplateColumns:"repeat(3, 1fr)",
+                  gap:12
+                }}>
+                  <div className="contact-tile" style={{ background:"#D6ECEC" }}>
+                    <div className="icon-circle"><IconBubble/></div>
+                    <p className="f-brasica" style={{fontSize:15, fontWeight:800, color:"#0B2150"}}>Chat en vivo</p>
+                    <p style={{fontSize:11, color:"#0B2150", opacity:0.6, fontWeight:700}}>Respuesta ~2 min</p>
+                  </div>
+                  <div className="contact-tile" style={{ background:"#FFE0DC" }}>
+                    <div className="icon-circle"><IconMail/></div>
+                    <p className="f-brasica" style={{fontSize:15, fontWeight:800, color:"#0B2150"}}>Email</p>
+                    <p style={{fontSize:11, color:"#0B2150", opacity:0.6, fontWeight:700}}>Respuesta ~2 h</p>
+                  </div>
+                  <div className="contact-tile" style={{ background:"#FFE7CC" }}>
+                    <div className="icon-circle"><IconWhats/></div>
+                    <p className="f-brasica" style={{fontSize:15, fontWeight:800, color:"#0B2150"}}>WhatsApp</p>
+                    <p style={{fontSize:11, color:"#0B2150", opacity:0.6, fontWeight:700}}>L–V de 9 a 19h</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* STATUS */}
+            <div id="sec-status" style={{
+              display:"flex", alignItems:"center", justifyContent:"center", gap:10,
+              padding:"14px 16px",
+              opacity:0.7,
+              flexWrap:"wrap"
+            }}>
+              <span className="status-dot"/>
+              <p style={{fontSize:13, color:"#0B2150", fontWeight:700}}>
+                Todo funcionando correctamente
+              </p>
+              <span style={{fontSize:11, color:"#0B2150", opacity:0.5}}>· actualizado hace 2 min · ver historial</span>
+            </div>
+          </main>
+        </div>
+      </div>
+
+      {/* DRAWER */}
+      {drawerOpen && (
+        <>
+          <div className="drawer-backdrop" onClick={()=>setDrawerOpen(false)}/>
+          <div className="drawer-panel">
+            <div style={{
+              display:"flex", alignItems:"center", justifyContent:"space-between",
+              padding:"20px 22px 16px",
+              borderBottom:"2px solid rgba(11,33,80,0.07)"
+            }}>
+              <div style={{display:"flex",alignItems:"center",gap:12}}>
+                <div style={{
+                  width:44, height:44, borderRadius:"50%",
+                  background:"#066FB4", border:"2.5px solid #0B2150",
+                  display:"flex", alignItems:"center", justifyContent:"center",
+                  fontWeight:800, fontSize:18, color:"white", flexShrink:0
+                }}>A</div>
+                <div>
+                  <p className="f-brasica" style={{color:"#0B2150",fontWeight:800,fontSize:16}}>Ana García</p>
+                  <p style={{color:"#0B2150",opacity:0.4,fontSize:11}}>@anaviajera</p>
+                </div>
+              </div>
+              <button onClick={()=>setDrawerOpen(false)} className="mm-icon-btn" style={{
+                background:"#0B215015", border:"none",
+                borderRadius:"50%", width:32, height:32,
+                color:"#0B2150", fontSize:15, cursor:"pointer",
+                display:"flex", alignItems:"center", justifyContent:"center"
+              }}>✕</button>
+            </div>
+            <nav style={{flex:1,overflowY:"auto",padding:"10px 0"}} className="mm-scroll">
+              {NAV_ITEMS.map((item,idx)=>(
+                <a key={idx}
+                  href={item.href || "#"}
+                  onClick={item.href ? undefined : (e)=>e.preventDefault()}
+                  style={{textDecoration:"none"}}>
+                  <div className="mm-nav-item" style={{
+                    display:"flex", alignItems:"center", gap:14, padding:"14px 22px",
+                    borderLeft:"4px solid transparent"
+                  }}>
+                    <span style={{fontSize:20,lineHeight:1}}>{item.icon}</span>
+                    <span style={{fontWeight:700, fontSize:17, color:"#0B2150", opacity:0.7, flex:1}}>{item.label}</span>
+                  </div>
+                </a>
+              ))}
+              <div style={{margin:"8px 22px",height:1.5,background:"rgba(11,33,80,0.08)",borderRadius:1}}/>
+              <div className="mm-nav-item" style={{
+                display:"flex", alignItems:"center", gap:14, padding:"14px 22px",
+                background:"rgba(11,33,80,0.07)",
+                borderLeft:"4px solid #FA9223"
+              }}>
+                <Mascot size={28} handUp={true} color="#0B2150"/>
+                <span className="f-brasica" style={{fontWeight:800,fontSize:17,color:"#0B2150",flex:1}}>Ayuda</span>
+                <div style={{width:8,height:8,borderRadius:"50%",background:"#FA9223"}}/>
+              </div>
+            </nav>
+            <div style={{padding:"16px 22px 22px",borderTop:"2px solid rgba(11,33,80,0.07)"}}>
+              <a href="MementoMundi Home.html" style={{textDecoration:"none"}}>
+                <button className="mm-btn-primary" style={{
+                  width:"100%", background:"#FA9223", color:"white", border:"none",
+                  borderRadius:99, padding:"15px 22px",
+                  fontWeight:800, fontSize:15, cursor:"pointer",
+                  boxShadow:"3px 3px 0px #0B2150",
+                  display:"flex", alignItems:"center", justifyContent:"center", gap:8,
+                  fontFamily:"'Nunito',sans-serif"
+                }}>← Volver a Viajes</button>
+              </a>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+function SectionLabel({ idx, label, sub, rightAction }) {
+  return (
+    <div style={{
+      display:"flex", alignItems:"flex-end", justifyContent:"space-between", gap:12,
+      paddingBottom:10,
+      borderBottom:"2px dashed rgba(11,33,80,0.18)"
+    }}>
+      <div style={{flex:1, minWidth:0}}>
+        <p className="f-brasica" style={{
+          fontSize:11, fontWeight:700, color:"#0B2150", opacity:0.4,
+          letterSpacing:"0.18em", textTransform:"uppercase",
+          marginBottom:4
+        }}>· {idx} ·</p>
+        <h2 className="f-brasica" style={{
+          fontSize:"clamp(22px, 3vw, 30px)", fontWeight:900, color:"#0B2150",
+          lineHeight:1.1, letterSpacing:"-0.01em"
+        }}>{label}</h2>
+        {sub && <p style={{fontSize:13, color:"#0B2150", opacity:0.55, marginTop:4, fontWeight:600}}>{sub}</p>}
+      </div>
+      {rightAction}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<AyudaResponsive/>);
+</script>
+</body>
+</html>
