@@ -13,7 +13,12 @@
       "Bash(rm -rf .vercel .next node_modules)",
       "Bash(npm ci:*)",
       "Bash(vercel --prod --yes --force)",
-      "mcp__claude_ai_Supabase__list_tables"
+      "mcp__claude_ai_Supabase__list_tables",
+      "Bash(vercel --prod --skip-build-confirmation)",
+      "Bash(vercel --prod)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"fix: remove unused TRENDING constant causing TypeScript build failure:*)",
+      "Bash(git push:*)"
     ]
   },
   "enabledPlugins": {

@@ -14,13 +14,6 @@ const STORIES = [
   { id: 's5',   label: '@leo',     plus: false, bg: '#0B2150',  border: '#5CA4A4', emoji: '🏔️', city: 'Nepal' },
 ]
 
-const TRENDING = [
-  { tag: '#cinqueterre',   posts: '1.2k posts' },
-  { tag: '#japonenotoño',  posts: '840 posts' },
-  { tag: '#roadtrip-norte',posts: '512 posts' },
-  { tag: '#islasgriegas',  posts: '398 posts' },
-]
-
 const MOSAIC1 = [
   { color: '#FA9223', emoji: '🏛️', rot: '-3deg' },
   { color: '#5CA4A4', emoji: '🌅', rot: '2deg' },
