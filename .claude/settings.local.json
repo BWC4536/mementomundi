@@ -18,7 +18,17 @@
       "Bash(vercel --prod)",
       "Bash(git add:*)",
       "Bash(git commit -m \"fix: remove unused TRENDING constant causing TypeScript build failure:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(xargs grep:*)",
+      "mcp__claude_ai_Supabase__list_projects",
+      "Bash(npm install:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx next:*)",
+      "Bash(vercel:*)",
+      "Bash(else echo:*)",
+      "Bash(fi)",
+      "Bash(grep -r \"packs\\\\|designs\\\\|cart_items\\\\|favorites\" /d/PERSONAL/Dinero/memento/mementomundi/supabase/migrations --include=*.sql)",
+      "Bash(find . -name *output* -o -name *generated* -o -name *images*)"
     ]
   },
   "enabledPlugins": {

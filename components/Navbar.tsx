@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useCart } from '@/hooks/useCart'
+import { useFavorites } from '@/hooks/useFavorites'
 
 interface NavbarProps {
   userName?: string
@@ -15,6 +17,8 @@ interface NavbarProps {
 export function Navbar({ userName = 'Ana García', userAvatar, userInitial = 'A' }: NavbarProps) {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const router = useRouter()
+  const { total } = useCart()
+  const { favorites } = useFavorites()
 
   async function handleSignOut() {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -90,6 +94,18 @@ export function Navbar({ userName = 'Ana García', userAvatar, userInitial = 'A'
               {[
                 { label: 'Mi Perfil', href: '/perfil', icon: UserIcon },
                 { label: 'Medallas', href: '/perfil?tab=medallas', icon: MedalIcon },
+                {
+                  label: 'Carrito',
+                  href: '/tienda',
+                  icon: CartIcon,
+                  badge: total.itemCount > 0 ? total.itemCount : undefined,
+                },
+                {
+                  label: 'Favoritos',
+                  href: '/tienda',
+                  icon: HeartFilledIcon,
+                  badge: favorites.length > 0 ? favorites.length : undefined,
+                },
                 { label: 'Configuración', href: '/perfil?tab=config', icon: SettingsIcon },
               ].map((item) => (
                 <DropdownMenu.Item key={item.label} asChild>
@@ -99,7 +115,15 @@ export function Navbar({ userName = 'Ana García', userAvatar, userInitial = 'A'
                     style={{ fontFamily: 'Space Grotesk, sans-serif' }}
                   >
                     <item.icon />
-                    {item.label}
+                    <span className="flex-1">{item.label}</span>
+                    {'badge' in item && item.badge !== undefined && (
+                      <span
+                        className="text-white text-xs font-bold rounded-full flex items-center justify-center"
+                        style={{ background: '#FA9223', minWidth: 18, height: 18, padding: '0 5px', fontSize: 10 }}
+                      >
+                        {item.badge}
+                      </span>
+                    )}
                   </Link>
                 </DropdownMenu.Item>
               ))}
@@ -294,6 +318,24 @@ function LogOutIcon() {
   return (
     <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
       <path d="M6 2H3a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h3M10 10l3-3-3-3M13 7.5H6" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  )
+}
+
+function CartIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+      <path d="M1 1h2l1.68 8.39a1 1 0 0 0 1 .61h4.86a1 1 0 0 0 1-.77L13 4H4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+      <circle cx="6" cy="13" r="1" fill="currentColor"/>
+      <circle cx="11" cy="13" r="1" fill="currentColor"/>
+    </svg>
+  )
+}
+
+function HeartFilledIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+      <path d="M7.5 12.5s-5.5-3.5-5.5-7A3.5 3.5 0 0 1 7.5 4.1 3.5 3.5 0 0 1 13 5.5c0 3.5-5.5 7-5.5 7Z" stroke="currentColor" strokeWidth="1.3" fill="currentColor" fillOpacity="0.3"/>
     </svg>
   )
 }
