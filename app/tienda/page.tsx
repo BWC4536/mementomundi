@@ -174,6 +174,7 @@ function PackModal({ pack, quantity, onClose, onAddToCart, isFav, onToggleFav, d
   const [uploading, setUploading] = useState(false)
   const [uploadError, setUploadError] = useState<string | null>(null)
   const [uploadUrl, setUploadUrl] = useState<string | null>(null)
+  const [stickerShape, setStickerShape] = useState<'redonda' | 'cuadrada'>('redonda')
   const fileRef = useRef<HTMLInputElement>(null)
   const photos = PACK_PHOTOS[pack.id]
   const price = calculatePrice(quantity, pack.id)
@@ -358,48 +359,104 @@ function PackModal({ pack, quantity, onClose, onAddToCart, isFav, onToggleFav, d
 
           {/* Upload diseño (pack personalizado) */}
           {pack.id === 'custom' && (
-            <div>
-              <p style={{ fontSize: 12, fontWeight: 700, color: '#0B2150', opacity: 0.5, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 10 }}>
-                Sube tu diseño
-              </p>
-              <input
-                ref={fileRef}
-                type="file"
-                accept=".png,.jpg,.jpeg,.svg"
-                className="hidden"
-                onChange={handleFileChange}
-              />
-              <button
-                onClick={() => fileRef.current?.click()}
-                className="w-full flex flex-col items-center justify-center gap-2 rounded-2xl transition-all"
-                style={{
-                  padding: '20px 16px',
-                  border: uploadUrl ? `2px solid ${pack.accent}` : '2px dashed rgba(11,33,80,0.2)',
-                  background: uploadUrl ? pack.accentLight : 'rgba(11,33,80,0.03)',
-                  cursor: 'pointer',
-                }}
-              >
-                {uploadUrl ? (
-                  <>
-                    <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4 11l5 5 9-9" stroke={pack.accent} strokeWidth="2.2" strokeLinecap="round"/></svg>
-                    <span style={{ fontSize: 13, fontWeight: 700, color: pack.accent }}>{customFile?.name ?? 'Archivo subido'}</span>
-                    <span style={{ fontSize: 11, color: pack.accent, opacity: 0.7 }}>Toca para cambiar</span>
-                  </>
-                ) : uploading ? (
-                  <>
-                    <div className="w-6 h-6 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: `${pack.accent} transparent transparent` }} />
-                    <span style={{ fontSize: 13, color: '#0B2150', opacity: 0.5 }}>Subiendo...</span>
-                  </>
-                ) : (
-                  <>
-                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M14 20V8M9 13l5-5 5 5" stroke="rgba(11,33,80,0.3)" strokeWidth="1.8" strokeLinecap="round"/><rect x="4" y="22" width="20" height="2" rx="1" fill="rgba(11,33,80,0.15)"/></svg>
-                    <span style={{ fontSize: 13, fontWeight: 700, color: '#0B2150', opacity: 0.55 }}>Toca para subir tu imagen</span>
-                    <span style={{ fontSize: 11, color: '#0B2150', opacity: 0.35 }}>PNG, JPG o SVG · máx 10MB</span>
-                  </>
+            <div className="flex flex-col gap-3">
+              <div>
+                <p style={{ fontSize: 12, fontWeight: 700, color: '#0B2150', opacity: 0.5, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 10 }}>
+                  Sube tu diseño
+                </p>
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept=".png,.jpg,.jpeg,.svg"
+                  className="hidden"
+                  onChange={handleFileChange}
+                />
+                <button
+                  onClick={() => fileRef.current?.click()}
+                  className="w-full flex flex-col items-center justify-center gap-2 rounded-2xl transition-all"
+                  style={{
+                    padding: '20px 16px',
+                    border: uploadUrl ? `2px solid ${pack.accent}` : '2px dashed rgba(11,33,80,0.2)',
+                    background: uploadUrl ? pack.accentLight : 'rgba(11,33,80,0.03)',
+                    cursor: 'pointer',
+                  }}
+                >
+                  {uploadUrl ? (
+                    <>
+                      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4 11l5 5 9-9" stroke={pack.accent} strokeWidth="2.2" strokeLinecap="round"/></svg>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: pack.accent }}>{customFile?.name ?? 'Archivo subido'}</span>
+                      <span style={{ fontSize: 11, color: pack.accent, opacity: 0.7 }}>Toca para cambiar</span>
+                    </>
+                  ) : uploading ? (
+                    <>
+                      <div className="w-6 h-6 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: `${pack.accent} transparent transparent` }} />
+                      <span style={{ fontSize: 13, color: '#0B2150', opacity: 0.5 }}>Subiendo...</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M14 20V8M9 13l5-5 5 5" stroke="rgba(11,33,80,0.3)" strokeWidth="1.8" strokeLinecap="round"/><rect x="4" y="22" width="20" height="2" rx="1" fill="rgba(11,33,80,0.15)"/></svg>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: '#0B2150', opacity: 0.55 }}>Toca para subir tu imagen</span>
+                      <span style={{ fontSize: 11, color: '#0B2150', opacity: 0.35 }}>PNG, JPG o SVG · máx 10MB</span>
+                    </>
+                  )}
+                </button>
+                {uploadError && (
+                  <p style={{ fontSize: 12, color: '#DC2626', marginTop: 6 }}>{uploadError}</p>
                 )}
-              </button>
-              {uploadError && (
-                <p style={{ fontSize: 12, color: '#DC2626', marginTop: 6 }}>{uploadError}</p>
+              </div>
+
+              {/* Selector de forma */}
+              {uploadUrl && (
+                <div className="flex flex-col gap-2.5">
+                  <p style={{ fontSize: 12, fontWeight: 700, color: '#0B2150', opacity: 0.5, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                    Forma de pegatina
+                  </p>
+                  <div className="flex gap-2.5">
+                    {['redonda', 'cuadrada'].map(shape => (
+                      <button
+                        key={shape}
+                        onClick={() => setStickerShape(shape as 'redonda' | 'cuadrada')}
+                        className="flex-1 flex items-center justify-center gap-2 rounded-xl transition-all py-3"
+                        style={{
+                          background: stickerShape === shape ? pack.accent : 'rgba(11,33,80,0.07)',
+                          border: `1.5px solid ${stickerShape === shape ? pack.accent : 'transparent'}`,
+                        }}
+                      >
+                        {shape === 'redonda' ? (
+                          <>
+                            <div style={{ width: 12, height: 12, borderRadius: '50%', background: stickerShape === shape ? 'white' : '#0B2150', opacity: stickerShape === shape ? 1 : 0.5 }} />
+                            <span style={{ fontSize: 13, fontWeight: 600, color: stickerShape === shape ? 'white' : '#0B2150', fontFamily: 'Space Grotesk, sans-serif' }}>Redonda</span>
+                          </>
+                        ) : (
+                          <>
+                            <div style={{ width: 12, height: 12, borderRadius: 3, background: stickerShape === shape ? 'white' : '#0B2150', opacity: stickerShape === shape ? 1 : 0.5 }} />
+                            <span style={{ fontSize: 13, fontWeight: 600, color: stickerShape === shape ? 'white' : '#0B2150', fontFamily: 'Space Grotesk, sans-serif' }}>Cuadrada</span>
+                          </>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Preview de pegatina */}
+                  <div className="flex flex-col items-center justify-center gap-2.5 rounded-2xl p-4" style={{ background: 'rgba(11,33,80,0.03)', border: '1px solid rgba(11,33,80,0.07)' }}>
+                    <p style={{ fontSize: 11, color: '#0B2150', opacity: 0.4, fontWeight: 600 }}>Vista previa</p>
+                    <div style={{
+                      width: 120,
+                      height: 120,
+                      borderRadius: stickerShape === 'redonda' ? '50%' : '12px',
+                      overflow: 'hidden',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                      border: `2px solid ${pack.accent}`,
+                      background: 'white',
+                    }}>
+                      <img
+                        src={uploadUrl}
+                        alt="Preview"
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
+                    </div>
+                  </div>
+                </div>
               )}
             </div>
           )}
