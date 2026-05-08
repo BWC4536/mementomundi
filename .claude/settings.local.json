@@ -28,7 +28,9 @@
       "Bash(else echo:*)",
       "Bash(fi)",
       "Bash(grep -r \"packs\\\\|designs\\\\|cart_items\\\\|favorites\" /d/PERSONAL/Dinero/memento/mementomundi/supabase/migrations --include=*.sql)",
-      "Bash(find . -name *output* -o -name *generated* -o -name *images*)"
+      "Bash(find . -name *output* -o -name *generated* -o -name *images*)",
+      "Bash(git commit:*)",
+      "Bash(grep -r custom-designs . --include=*.ts --include=*.tsx --include=*.sql)"
     ]
   },
   "enabledPlugins": {

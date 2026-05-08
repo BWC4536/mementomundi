@@ -21,20 +21,27 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'El archivo supera el tamaño máximo de 10MB.' }, { status: 400 })
     }
 
-    const ext = file.name.split('.').pop()?.toLowerCase() ?? 'png'
+    // Determinar extensión del archivo
+    let ext = 'png'
+    if (file.name && file.name.includes('.')) {
+      ext = file.name.split('.').pop()?.toLowerCase() ?? 'png'
+    }
+
     const safeName = `${user.id}/${Date.now()}.${ext}`
 
     // Convert File to Buffer for Supabase
     const buffer = await file.arrayBuffer()
 
     const { data, error } = await supabase.storage
-      .from('custom-designs')
+      .from('custom-stickers')
       .upload(safeName, buffer, { contentType: file.type, upsert: false })
 
     if (error) {
       console.error('Upload error details:', {
         message: error.message,
         status: error.status,
+        path: safeName,
+        bucket: 'custom-stickers'
       })
       return NextResponse.json({
         error: error.message || 'Error al subir el archivo a Storage. Verifica que el bucket exista.'
@@ -45,15 +52,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'No se pudo obtener la ruta del archivo' }, { status: 500 })
     }
 
-    const { data: urlData } = supabase.storage
-      .from('custom-designs')
-      .getPublicUrl(data.path)
+    // Generar URL firmada (signed URL) en lugar de URL pública
+    // El bucket custom-stickers es privado, así que getPublicUrl no funciona
+    const { data: signedData, error: signedError } = await supabase.storage
+      .from('custom-stickers')
+      .createSignedUrl(data.path, 3600) // URL válida por 1 hora
 
-    if (!urlData?.publicUrl) {
-      return NextResponse.json({ error: 'No se pudo generar URL pública' }, { status: 500 })
+    if (signedError || !signedData?.signedUrl) {
+      console.error('Signed URL error:', signedError)
+      return NextResponse.json({ error: 'No se pudo generar URL del archivo' }, { status: 500 })
     }
 
-    return NextResponse.json({ url: urlData.publicUrl }, { status: 201 })
+    return NextResponse.json({ url: signedData.signedUrl }, { status: 201 })
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err)
     console.error('Upload route error:', message)

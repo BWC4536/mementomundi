@@ -3,11 +3,11 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
-import { useRouter } from 'next/navigation'
 import { Mascot } from '@/components/Mascot'
 import { useCart } from '@/hooks/useCart'
 import { useFavorites } from '@/hooks/useFavorites'
 import { calculatePrice, QUANTITY_PRESETS } from '@/lib/pricing/pricing'
+import { handleSignOutAction } from './actions'
 import type { PackType } from '@/lib/pricing/pricing'
 import type { StoreDesign } from '@/types/store.types'
 
@@ -182,18 +182,42 @@ function PackModal({ pack, quantity, onClose, onAddToCart, isFav, onToggleFav, d
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
+
+    // Validar tipo de archivo
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/svg+xml']
+    if (!allowedTypes.includes(file.type)) {
+      setUploadError('Solo se permiten PNG, JPG/JPEG o SVG')
+      return
+    }
+
+    // Validar tamaño
+    if (file.size > 10 * 1024 * 1024) {
+      setUploadError('El archivo supera el límite de 10MB')
+      return
+    }
+
     setCustomFile(file)
     setUploadError(null)
     setUploading(true)
+
     try {
       const fd = new FormData()
-      fd.append('file', file)
+      // Si el archivo no tiene nombre válido (ej: blob de cámara), asignar uno
+      const fileName = file.name || `photo.${file.type === 'image/jpeg' ? 'jpg' : file.type === 'image/png' ? 'png' : 'svg'}`
+      const namedFile = new File([file], fileName, { type: file.type })
+      fd.append('file', namedFile)
+
       const res = await fetch('/api/upload', { method: 'POST', body: fd })
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error)
+
+      if (!res.ok) throw new Error(data.error || 'Error en la respuesta del servidor')
+      if (!data.url) throw new Error('No se recibió URL del archivo')
+
       setUploadUrl(data.url)
     } catch (err: unknown) {
-      setUploadError(err instanceof Error ? err.message : 'Error al subir el archivo')
+      const errorMsg = err instanceof Error ? err.message : 'Error al subir el archivo'
+      console.error('Upload error:', errorMsg)
+      setUploadError(errorMsg)
     } finally {
       setUploading(false)
     }
@@ -506,7 +530,6 @@ function PackModal({ pack, quantity, onClose, onAddToCart, isFav, onToggleFav, d
 // ─── Página principal ─────────────────────────────────────────────────────────
 
 export default function TiendaPage() {
-  const router = useRouter()
   const { total, items: cartItems, addItem, loading: cartLoading } = useCart()
   const { isFavorite, toggle: toggleFav, favorites, loading: favLoading } = useFavorites()
   const [quantity, setQuantity] = useState(20)
@@ -553,15 +576,8 @@ export default function TiendaPage() {
     }
   }, [openModal, effectiveQty, addItem])
 
-  async function handleSignOut() {
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-    if (url && key) {
-      const { createClient } = await import('@/lib/supabase/client')
-      await createClient().auth.signOut()
-    }
-    router.push('/login')
-    router.refresh()
+  const handleSignOut = () => {
+    handleSignOutAction()
   }
 
   const openPack = openModal ? PACKS.find(p => p.id === openModal) : null
