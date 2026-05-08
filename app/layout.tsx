@@ -4,6 +4,9 @@ import './globals.css'
 export const metadata: Metadata = {
   title: 'MementoMundi',
   description: 'Pegatinas físicas que cuentan tu viaje.',
+  icons: {
+    icon: '/memento-logo.svg',
+  },
 }
 
 export default function RootLayout({

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import type { CartItem, CartState } from '@/types/store.types'
+import type { CartState } from '@/types/store.types'
 import type { PackType } from '@/lib/pricing/pricing'
 
 const EMPTY_STATE: CartState = {
