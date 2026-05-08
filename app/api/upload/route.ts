@@ -24,13 +24,21 @@ export async function POST(req: NextRequest) {
     const ext = file.name.split('.').pop()?.toLowerCase() ?? 'png'
     const safeName = `${user.id}/${Date.now()}.${ext}`
 
+    // Convert File to Buffer for Supabase
+    const buffer = await file.arrayBuffer()
+
     const { data, error } = await supabase.storage
       .from('custom-designs')
-      .upload(safeName, file, { contentType: file.type, upsert: false })
+      .upload(safeName, buffer, { contentType: file.type, upsert: false })
 
     if (error) {
-      console.error('Upload error:', error)
-      return NextResponse.json({ error: `Error al subir: ${error.message}` }, { status: 500 })
+      console.error('Upload error details:', {
+        message: error.message,
+        status: error.status,
+      })
+      return NextResponse.json({
+        error: error.message || 'Error al subir el archivo a Storage. Verifica que el bucket exista.'
+      }, { status: 500 })
     }
 
     if (!data?.path) {
@@ -47,7 +55,10 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ url: urlData.publicUrl }, { status: 201 })
   } catch (err) {
-    console.error('Upload route error:', err)
-    return NextResponse.json({ error: 'Error interno al procesar la solicitud' }, { status: 500 })
+    const message = err instanceof Error ? err.message : String(err)
+    console.error('Upload route error:', message)
+    return NextResponse.json({
+      error: `Error: ${message}`
+    }, { status: 500 })
   }
 }
