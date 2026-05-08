@@ -207,7 +207,7 @@ export function Navbar({ userName = 'Ana García', userAvatar, userInitial = 'A'
               {/* Footer */}
               <div className="p-5" style={{ borderTop: '1px solid rgba(11,33,80,0.08)' }}>
                 <Link
-                  href="/nuevo-viaje"
+                  href="/tienda"
                   onClick={() => setDrawerOpen(false)}
                   className="flex items-center justify-center gap-2 w-full py-3 rounded-full font-bold text-white transition-all hover:opacity-90 active:scale-[0.98]"
                   style={{ background: '#FA9223', fontFamily: 'Space Grotesk, sans-serif', fontSize: '15px' }}

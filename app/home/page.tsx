@@ -177,9 +177,9 @@ export default async function HomePage() {
         </span>
       </Link>
 
-      {/* + Nuevo Viaje — bottom right */}
+      {/* + Nuevo Viaje — bottom right (goes to /tienda to buy sticker packs first) */}
       <Link
-        href="/nuevo-viaje"
+        href="/tienda"
         className="fixed bottom-7 right-4 z-10 flex items-center gap-2 py-3 px-5 rounded-full font-bold text-white text-sm shadow-lg transition-all hover:opacity-90 hover:-translate-y-0.5 active:scale-[0.97]"
         style={{
           background: '#FA9223',
@@ -222,14 +222,14 @@ function EmptyState() {
         Crea tu primer viaje y empieza a coleccionar memorias
       </p>
       <Link
-        href="/nuevo-viaje"
+        href="/tienda"
         className="flex items-center gap-2 py-2.5 px-5 rounded-full font-bold text-white text-sm transition-all hover:opacity-90"
         style={{ background: '#FA9223', fontFamily: 'Space Grotesk, sans-serif' }}
       >
         <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
           <path d="M6.5 1v11M1 6.5h11" stroke="white" strokeWidth="2" strokeLinecap="round"/>
         </svg>
-        Crear viaje
+        Comprar pegatinas
       </Link>
     </div>
   )
