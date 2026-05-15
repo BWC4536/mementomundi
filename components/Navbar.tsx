@@ -1,48 +1,57 @@
 'use client'
 
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { useState } from 'react'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useCart } from '@/hooks/useCart'
 import { useFavorites } from '@/hooks/useFavorites'
 
-interface NavbarProps {
-  userName?: string
-  userAvatar?: string
-  userInitial?: string
+export interface NavbarUser {
+  displayName: string
+  initial: string
+  avatarUrl?: string
 }
 
-export function Navbar({ userName = 'Ana García', userAvatar, userInitial = 'A' }: NavbarProps) {
+interface NavbarProps {
+  user?: NavbarUser | null
+}
+
+export function Navbar({ user = null }: NavbarProps) {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const router = useRouter()
+  const pathname = usePathname()
   const { total } = useCart()
   const { favorites } = useFavorites()
 
+  const isAuthed = !!user
+  const userName = user?.displayName ?? ''
+  const userAvatar = user?.avatarUrl
+  const userInitial = user?.initial ?? '?'
+
   async function handleSignOut() {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-    if (supabaseUrl && supabaseKey) {
-      const { createClient } = await import('@/lib/supabase/client')
-      const supabase = createClient()
-      await supabase.auth.signOut()
-    }
-    router.push('/login')
+    const { signOutAction } = await import('@/app/auth/actions')
+    await signOutAction()
+    // signOutAction does its own redirect to /tienda
     router.refresh()
   }
 
-  const NAV_ITEMS = [
-    { label: 'Viajes', href: '/home', active: true, icon: TicketIcon },
-    { label: 'RRSS', href: '/rrss', active: false, icon: GlobeIcon },
-    { label: 'Tienda', href: '/tienda', active: false, icon: ShopIcon },
-    { label: 'Sobre Nosotros', href: '/sobre-nosotros', active: false, icon: HeartIcon },
+  const RAW_NAV_ITEMS = [
+    { label: 'Viajes', href: '/home', icon: TicketIcon },
+    { label: 'RRSS', href: '/rrss', icon: GlobeIcon },
+    { label: 'Tienda', href: '/tienda', icon: ShopIcon },
+    { label: 'Sobre Nosotros', href: '/sobre-nosotros', icon: HeartIcon },
   ]
+  const NAV_ITEMS = RAW_NAV_ITEMS.map((item) => ({
+    ...item,
+    active: pathname === item.href || pathname.startsWith(item.href + '/'),
+  }))
 
   return (
     <>
       {/* Top Nav */}
-      <nav className="flex items-center justify-between px-4 py-3 sticky top-0 z-20" style={{ background: '#EAE7DA' }}>
+      <nav className="flex items-center justify-between px-4 py-3 sticky top-0 z-50" style={{ background: '#EAE7DA' }}>
         {/* Hamburger */}
         <button
           onClick={() => setDrawerOpen(true)}
@@ -57,7 +66,32 @@ export function Navbar({ userName = 'Ana García', userAvatar, userInitial = 'A'
         {/* Wordmark */}
         <img src="/MEMENTO_FRASE.svg" alt="Memento Mundi" className="h-7 object-contain" />
 
-        {/* Profile dropdown */}
+        {/* Top-right: anonymous = login/signup pills, authed = profile dropdown */}
+        {!isAuthed ? (
+          <div className="flex items-center gap-2">
+            <Link
+              href="/login"
+              className="hidden sm:inline-flex items-center px-3 py-1.5 text-navy font-bold rounded-full transition-all hover:bg-navy/5"
+              style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 13 }}
+            >
+              Iniciar sesión
+            </Link>
+            <Link
+              href="/signup"
+              className="inline-flex items-center px-3 py-1.5 text-white font-bold rounded-full transition-transform active:scale-95"
+              style={{
+                fontFamily: 'Space Grotesk, sans-serif',
+                fontSize: 13,
+                background: '#FA9223',
+                border: '2px solid #0B2150',
+                boxShadow: '2px 2px 0 #0B2150',
+              }}
+            >
+              <span className="sm:hidden">Entrar</span>
+              <span className="hidden sm:inline">Crear cuenta</span>
+            </Link>
+          </div>
+        ) : (
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
             <button
@@ -137,12 +171,13 @@ export function Navbar({ userName = 'Ana García', userAvatar, userInitial = 'A'
                   style={{ color: '#DC2626', fontFamily: 'Space Grotesk, sans-serif' }}
                 >
                   <LogOutIcon />
-                  Log Out
+                  Cerrar sesión
                 </button>
               </DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Portal>
         </DropdownMenu.Root>
+        )}
       </nav>
 
       {/* Drawer */}
@@ -172,18 +207,27 @@ export function Navbar({ userName = 'Ana García', userAvatar, userInitial = 'A'
             >
               {/* Header */}
               <div className="flex items-center justify-between p-5" style={{ borderBottom: '1px solid rgba(11,33,80,0.08)' }}>
-                <div className="flex items-center gap-3">
-                  <div
-                    className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-base"
-                    style={{ background: '#066FB4', fontFamily: 'Space Grotesk, sans-serif' }}
-                  >
-                    {userInitial}
+                {isAuthed ? (
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-base"
+                      style={{ background: '#066FB4', fontFamily: 'Space Grotesk, sans-serif' }}
+                    >
+                      {userInitial}
+                    </div>
+                    <div>
+                      <p className="font-bold text-navy text-sm" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>{userName}</p>
+                      <p className="text-xs opacity-40 text-navy">Viajero Mundi</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-bold text-navy text-sm" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>{userName}</p>
-                    <p className="text-xs opacity-40 text-navy">Viajero Mundi</p>
+                ) : (
+                  <div className="flex flex-col gap-1">
+                    <img src="/MEMENTO_FRASE.svg" alt="Memento Mundi" className="h-6 object-contain" />
+                    <p className="text-xs opacity-50 text-navy" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                      Colecciona el mundo
+                    </p>
                   </div>
-                </div>
+                )}
                 <button
                   onClick={() => setDrawerOpen(false)}
                   className="w-7 h-7 rounded-full flex items-center justify-center transition-all hover:bg-navy/10 active:scale-95"
@@ -230,17 +274,48 @@ export function Navbar({ userName = 'Ana García', userAvatar, userInitial = 'A'
 
               {/* Footer */}
               <div className="p-5" style={{ borderTop: '1px solid rgba(11,33,80,0.08)' }}>
-                <Link
-                  href="/tienda"
-                  onClick={() => setDrawerOpen(false)}
-                  className="flex items-center justify-center gap-2 w-full py-3 rounded-full font-bold text-white transition-all hover:opacity-90 active:scale-[0.98]"
-                  style={{ background: '#FA9223', fontFamily: 'Space Grotesk, sans-serif', fontSize: '15px' }}
-                >
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M8 2v12M2 8h12" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-                  </svg>
-                  Nuevo Viaje
-                </Link>
+                {isAuthed ? (
+                  <Link
+                    href="/nuevo-viaje"
+                    onClick={() => setDrawerOpen(false)}
+                    className="flex items-center justify-center gap-2 w-full py-3 rounded-full font-bold text-white transition-all hover:opacity-90 active:scale-[0.98]"
+                    style={{ background: '#FA9223', fontFamily: 'Space Grotesk, sans-serif', fontSize: '15px' }}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M8 2v12M2 8h12" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                    Nuevo Viaje
+                  </Link>
+                ) : (
+                  <div className="flex flex-col gap-2">
+                    <Link
+                      href="/signup"
+                      onClick={() => setDrawerOpen(false)}
+                      className="flex items-center justify-center w-full py-3 rounded-full font-bold text-white transition-all active:scale-[0.98]"
+                      style={{
+                        background: '#FA9223',
+                        border: '2px solid #0B2150',
+                        boxShadow: '3px 3px 0 #0B2150',
+                        fontFamily: 'Space Grotesk, sans-serif',
+                        fontSize: '15px',
+                      }}
+                    >
+                      Crear cuenta
+                    </Link>
+                    <Link
+                      href="/login"
+                      onClick={() => setDrawerOpen(false)}
+                      className="flex items-center justify-center w-full py-3 rounded-full font-bold transition-all hover:bg-navy/5"
+                      style={{
+                        color: '#0B2150',
+                        fontFamily: 'Space Grotesk, sans-serif',
+                        fontSize: '14px',
+                      }}
+                    >
+                      Ya tengo cuenta
+                    </Link>
+                  </div>
+                )}
               </div>
             </motion.div>
           </motion.div>

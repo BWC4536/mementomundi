@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { Award, Sparkles } from 'lucide-react'
 
 interface MedalCelebrationModalProps {
   monumentName: string
@@ -52,14 +53,14 @@ export function MedalCelebrationModal({ monumentName, onContinue }: MedalCelebra
           style={{ width: 96, height: 96 }}
         >
           <div
-            className="w-24 h-24 rounded-full flex items-center justify-center text-4xl"
+            className="w-24 h-24 rounded-full flex items-center justify-center"
             style={{
               background: 'linear-gradient(135deg, #FA9223 0%, #FFB4AD 100%)',
               border: '4px solid #0B2150',
               boxShadow: '4px 4px 0 #0B2150',
             }}
           >
-            🏅
+            <Award size={44} strokeWidth={2} color="#0B2150" aria-hidden />
           </div>
         </motion.div>
 
@@ -98,10 +99,11 @@ export function MedalCelebrationModal({ monumentName, onContinue }: MedalCelebra
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.9 }}
           onClick={onContinue}
-          className="w-full py-4 rounded-full font-brasica font-black text-white"
+          className="w-full py-4 rounded-full font-display font-black text-white inline-flex items-center justify-center gap-2 cursor-pointer transition hover:translate-y-0.5"
           style={{ background: '#FA9223', border: '2.5px solid #0B2150', boxShadow: '4px 4px 0 #0B2150', fontSize: 16 }}
         >
-          ¡Ver mi scrapbook! 🎉
+          ¡Ver mi scrapbook!
+          <Sparkles size={18} strokeWidth={2.25} />
         </motion.button>
       </motion.div>
     </motion.div>

@@ -1,7 +1,10 @@
 'use client'
 
 import dynamic from 'next/dynamic'
+import { useEffect, useState } from 'react'
 import { Camera, Map, Sparkles, Stamp, ArrowRight, Plane, Heart } from 'lucide-react'
+import { Navbar, type NavbarUser } from '@/components/Navbar'
+import { createClient } from '@/lib/supabase/client'
 
 const HeroScrollVideo = dynamic(
   () => import('@/components/tienda/HeroScrollVideo').then(mod => ({ default: mod.HeroScrollVideo })),
@@ -305,8 +308,34 @@ function CTA() {
 
 // ─── Página principal ───────────────────────────────────────────────────────
 export default function TiendaPage() {
+  const [navUser, setNavUser] = useState<NavbarUser | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    const supabase = createClient()
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (cancelled) return
+      if (!user) { setNavUser(null); return }
+      const meta = user.user_metadata as Record<string, unknown> | null
+      const metaName = typeof meta?.display_name === 'string' ? meta.display_name : ''
+      const display = metaName || user.email?.split('@')[0] || 'Viajero'
+      setNavUser({ displayName: display, initial: display[0]?.toUpperCase() || 'V' })
+    })
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      const user = session?.user
+      if (!user) { setNavUser(null); return }
+      const meta = user.user_metadata as Record<string, unknown> | null
+      const metaName = typeof meta?.display_name === 'string' ? meta.display_name : ''
+      const display = metaName || user.email?.split('@')[0] || 'Viajero'
+      setNavUser({ displayName: display, initial: display[0]?.toUpperCase() || 'V' })
+    })
+    return () => { cancelled = true; subscription.unsubscribe() }
+  }, [])
+
   return (
     <main className="bg-cream text-navy">
+      <Navbar user={navUser} />
+
       {/* HERO SCROLL-DRIVEN VIDEO — al inicio de la página */}
       <HeroScrollVideo />
 

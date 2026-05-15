@@ -31,7 +31,17 @@
       "Bash(find . -name *output* -o -name *generated* -o -name *images*)",
       "Bash(git commit:*)",
       "Bash(grep -r custom-designs . --include=*.ts --include=*.tsx --include=*.sql)",
-      "mcp__claude_ai_Supabase__get_project"
+      "mcp__claude_ai_Supabase__get_project",
+      "Bash(npm list *)",
+      "Bash(find \"d:\\\\PERSONAL\\\\Dinero\\\\memento\\\\mementomundi\\\\components\" -name \"*Header*\" -o -name \"*header*\" -o -name \"*Nav*\" -o -name \"*nav*\" 2>nul)",
+      "Read(//c/Users/artur/.claude/plugins/cache/claude-plugins-official/vercel/2e79fc9698b0/skills/nextjs/references/**)",
+      "Bash(grep -l \"mascot\\\\|Mascot\\\\|float-slow\\\\|polaroid\\\\|grain\\\\|stickers\\\\|decorative\" \"d:\\\\PERSONAL\\\\Dinero\\\\memento\\\\mementomundi\\\\app\\\\*.tsx\" 2>nul | head -10)",
+      "Bash(ls \"d:\\\\PERSONAL\\\\Dinero\\\\memento\\\\mementomundi\\\\app\\\\tienda\" 2>nul)",
+      "Bash(grep -h \"^import.*components\" \"d:\\\\PERSONAL\\\\Dinero\\\\memento\\\\mementomundi\\\\app\\\\login\\\\page.tsx\" \"d:\\\\PERSONAL\\\\Dinero\\\\memento\\\\mementomundi\\\\app\\\\signup\\\\page.tsx\" \"d:\\\\PERSONAL\\\\Dinero\\\\memento\\\\mementomundi\\\\app\\\\perfil\\\\page.tsx\" 2>nul | sort | uniq)",
+      "Bash(grep -h \"^import.*components\" \"d:\\\\PERSONAL\\\\Dinero\\\\memento\\\\mementomundi\\\\app\\\\nuevo-viaje\\\\page.tsx\" 2>nul | head -10)"
+    ],
+    "additionalDirectories": [
+      "d:\\PERSONAL\\Dinero\\memento\\mementomundi"
     ]
   },
   "enabledPlugins": {

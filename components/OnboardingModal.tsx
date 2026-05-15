@@ -2,21 +2,29 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Package, Camera, Map, ArrowRight, Sparkles } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import { Mascot } from '@/components/Mascot'
 
-const SLIDES = [
+interface Slide {
+  icon: LucideIcon
+  title: string
+  description: string
+}
+
+const SLIDES: Slide[] = [
   {
-    emoji: '📦',
+    icon: Package,
     title: '1. Compra tu pack',
     description: 'Pegatinas personalizadas con tu QR único. Cada pack incluye tu llavero y acceso al scrapbook.',
   },
   {
-    emoji: '📷',
+    icon: Camera,
     title: '2. Escanea tu QR',
     description: 'Activa tu pack y empieza tu primer viaje. Solo apunta la cámara al llavero.',
   },
   {
-    emoji: '🗺️',
+    icon: Map,
     title: '3. Vive tu scrapbook',
     description: 'Pega, escanea y crea recuerdos que duran para siempre. Comparte con quien quieras.',
   },
@@ -104,13 +112,18 @@ export function OnboardingModal({ name, onComplete }: OnboardingModalProps) {
               transition={{ duration: 0.22 }}
               className="flex flex-col items-center text-center"
             >
-              <div
-                className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4"
-                style={{ background: 'white', border: '2px solid #0B2150', boxShadow: '3px 3px 0 #0B2150', fontSize: 32 }}
-              >
-                {SLIDES[slide].emoji}
-              </div>
-              <h3 className="font-brasica font-black text-navy mb-2" style={{ fontSize: 20 }}>
+              {(() => {
+                const Icon = SLIDES[slide].icon
+                return (
+                  <div
+                    className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4"
+                    style={{ background: 'white', border: '2px solid #0B2150', boxShadow: '3px 3px 0 #0B2150' }}
+                  >
+                    <Icon size={32} strokeWidth={2} color="#0B2150" aria-hidden />
+                  </div>
+                )
+              })()}
+              <h3 className="font-display font-black text-navy mb-2" style={{ fontSize: 20 }}>
                 {SLIDES[slide].title}
               </h3>
               <p className="font-grown text-navy" style={{ fontSize: 14, opacity: 0.65, lineHeight: 1.6 }}>
@@ -138,7 +151,7 @@ export function OnboardingModal({ name, onComplete }: OnboardingModalProps) {
           {/* CTA */}
           <button
             onClick={goNext}
-            className="relative w-full py-4 rounded-full font-brasica font-black text-white overflow-hidden"
+            className="relative w-full py-4 rounded-full font-display font-black text-white overflow-hidden inline-flex items-center justify-center gap-2 cursor-pointer transition hover:translate-y-0.5"
             style={{
               background: '#FA9223',
               border: '2.5px solid #0B2150',
@@ -146,8 +159,12 @@ export function OnboardingModal({ name, onComplete }: OnboardingModalProps) {
               fontSize: 16,
             }}
           >
-            {slide < SLIDES.length - 1 ? 'Siguiente →' : '¡Empezar! 🎉'}
-            <span className="absolute bottom-0 right-0 w-0 h-0" style={{ borderStyle: 'solid', borderWidth: '0 0 12px 12px', borderColor: 'transparent transparent rgba(11,33,80,0.2) transparent' }} />
+            {slide < SLIDES.length - 1 ? (
+              <>Siguiente<ArrowRight size={18} strokeWidth={2.5} /></>
+            ) : (
+              <>¡Empezar!<Sparkles size={18} strokeWidth={2.5} /></>
+            )}
+            <span className="absolute bottom-0 right-0 w-0 h-0" style={{ borderStyle: 'solid', borderWidth: '0 0 12px 12px', borderColor: 'transparent transparent rgba(11,33,80,0.2) transparent' }} aria-hidden />
           </button>
 
           {slide < SLIDES.length - 1 && (

@@ -11,19 +11,16 @@ import {
 } from '@/schemas/auth.schema'
 import { PasswordStrength } from '@/components/PasswordStrength'
 import { OnboardingModal } from '@/components/OnboardingModal'
-
-// TODO: install @supabase/supabase-js + @supabase/ssr, then uncomment:
-// import { createBrowserClient } from '@supabase/ssr'
-// const supabase = createBrowserClient(
-//   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-//   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-// )
+import { signUpAction } from '@/app/auth/actions'
+import { createClient } from '@/lib/supabase/client'
+import { Map, Star, Plane, Camera } from 'lucide-react'
+import { StickerBadge } from '@/components/ui/StickerBadge'
 
 const DECO_STICKERS = [
-  { emoji: '🗺️', top: '10%', left: '9%',  rot: 12,  size: 42 },
-  { emoji: '⭐', top: '30%', right: '8%', rot: -8,  size: 36 },
-  { emoji: '✈️', bottom: '30%', left: '7%', rot: -14, size: 40 },
-  { emoji: '📸', bottom: '15%', right: '10%', rot: 10, size: 38 },
+  { icon: Map,    color: 'cream'  as const, top: '10%', left: '9%',  rot: 12,  label: 'Aventura', delay: 0 },
+  { icon: Star,   color: 'orange' as const, top: '30%', right: '8%', rot: -8,  label: 'Memorias', delay: 0.6 },
+  { icon: Plane,  color: 'teal'   as const, bottom: '30%', left: '7%', rot: -14, label: 'Volar', delay: 1.2 },
+  { icon: Camera, color: 'navy'   as const, bottom: '15%', right: '10%', rot: 10, label: 'Captura', delay: 0.3 },
 ]
 
 const inputBase = (hasError: boolean) => ({
@@ -101,25 +98,12 @@ export default function SignupPage() {
 
     setLoading(true)
     try {
-      // TODO: Supabase sign up
-      // const { data: authData, error: authError } = await supabase.auth.signUp({
-      //   email,
-      //   password,
-      //   options: { data: { display_name: name, subscribe_newsletter: newsletter } },
-      // })
-      // if (authError) throw authError
-      //
-      // await supabase.from('profiles').insert({
-      //   id: authData.user!.id,
-      //   display_name: name,
-      //   email,
-      //   role: 'user',
-      // })
-
-      await new Promise((r) => setTimeout(r, 1000))
+      const result = await signUpAction({ name, email, password, newsletter })
+      if (result?.error) throw new Error(result.error)
       setShowOnboarding(true)
-    } catch {
-      setGlobalError('Este email ya está en uso o ha ocurrido un error.')
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Este email ya está en uso o ha ocurrido un error.'
+      setGlobalError(msg)
       await controls.start({ x: [0, -10, 10, -8, 8, -4, 4, 0], transition: { duration: 0.45 } })
     } finally {
       setLoading(false)
@@ -128,13 +112,19 @@ export default function SignupPage() {
 
   async function handleGoogle() {
     setOauthLoading(true)
+    setGlobalError('')
     try {
-      // TODO: await supabase.auth.signInWithOAuth({
-      //   provider: 'google',
-      //   options: { redirectTo: `${window.location.origin}/auth/callback` },
-      // })
-      await new Promise((r) => setTimeout(r, 800))
-    } finally {
+      const supabase = createClient()
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: `${window.location.origin}/auth/callback?next=/tienda` },
+      })
+      if (error) {
+        setGlobalError('No se pudo conectar con Google')
+        setOauthLoading(false)
+      }
+    } catch {
+      setGlobalError('No se pudo conectar con Google')
       setOauthLoading(false)
     }
   }
@@ -162,16 +152,25 @@ export default function SignupPage() {
           style={{ background: '#FFB4AD' }}
         >
           {DECO_STICKERS.map((s, i) => (
-            <motion.span
+            <motion.div
               key={i}
               initial={{ opacity: 0, scale: 0.5, rotate: s.rot }}
               animate={{ opacity: 1, scale: 1, rotate: s.rot }}
               transition={{ delay: 0.15 + i * 0.1, type: 'spring', stiffness: 200 }}
-              className="absolute select-none pointer-events-none"
-              style={{ top: s.top, left: (s as {left?: string}).left, right: (s as {right?: string}).right, bottom: s.bottom, fontSize: s.size }}
+              className="absolute select-none pointer-events-none float-slow"
+              style={{
+                top: (s as { top?: string }).top,
+                left: (s as { left?: string }).left,
+                right: (s as { right?: string }).right,
+                bottom: (s as { bottom?: string }).bottom,
+                ['--r' as string]: `${s.rot}deg`,
+                animationDelay: `${s.delay}s`,
+              } as React.CSSProperties}
             >
-              {s.emoji}
-            </motion.span>
+              <StickerBadge color={s.color} icon={s.icon} size="md" rotate={s.rot}>
+                {s.label}
+              </StickerBadge>
+            </motion.div>
           ))}
 
           <motion.div
@@ -182,10 +181,11 @@ export default function SignupPage() {
             style={{ width: 260, height: 300 }}
           >
             <Image
-              src="/IMG_1448removebgpreview.png"
-              alt="Mascot"
+              src="/character-male.png"
+              alt="Memento Mundi traveler"
               fill
-              className="object-contain drop-shadow-xl"
+              className="object-contain drop-shadow-[0_20px_25px_rgba(11,33,72,0.35)]"
+              priority
             />
           </motion.div>
 
@@ -210,7 +210,8 @@ export default function SignupPage() {
         </div>
 
         {/* ── RIGHT PANEL (form) ── */}
-        <div className="flex-1 flex flex-col items-center justify-center px-5 py-10 overflow-y-auto lg:max-w-lg lg:mx-auto">
+        <div className="flex-1 flex flex-col items-center justify-center px-5 py-10 overflow-y-auto lg:max-w-lg lg:mx-auto relative">
+          <div className="grain absolute inset-0 opacity-30 pointer-events-none" aria-hidden />
 
           {/* Logo — mobile only */}
           <div className="lg:hidden mb-6">

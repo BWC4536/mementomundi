@@ -5,20 +5,17 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion, useAnimation } from 'framer-motion'
+import { Camera, Plane, Luggage, Map } from 'lucide-react'
 import { validateLogin, hasLoginErrors } from '@/schemas/auth.schema'
-
-// TODO: install @supabase/supabase-js + @supabase/ssr, then uncomment:
-// import { createBrowserClient } from '@supabase/ssr'
-// const supabase = createBrowserClient(
-//   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-//   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-// )
+import { signInAction } from '@/app/auth/actions'
+import { createClient } from '@/lib/supabase/client'
+import { StickerBadge } from '@/components/ui/StickerBadge'
 
 const DECO_STICKERS = [
-  { emoji: '📷', top: '12%', left: '8%',  rot: -14, size: 44 },
-  { emoji: '✈️', top: '22%', right: '10%', rot: 10,  size: 40 },
-  { emoji: '🧳', bottom: '28%', left: '12%', rot: 8, size: 38 },
-  { emoji: '🗺️', bottom: '18%', right: '8%', rot: -10, size: 36 },
+  { icon: Camera, color: 'orange' as const, top: '12%', left: '8%',  rot: -14, label: 'Foto', delay: 0 },
+  { icon: Plane,  color: 'coral'  as const, top: '22%', right: '10%', rot: 10,  label: 'Vuelo', delay: 0.6 },
+  { icon: Luggage,color: 'cream'  as const, bottom: '28%', left: '12%', rot: 8, label: 'Maleta', delay: 1.2 },
+  { icon: Map,    color: 'teal'   as const, bottom: '18%', right: '8%', rot: -10, label: 'Mapa', delay: 0.3 },
 ]
 
 const inputStyle = (hasError: boolean) => ({
@@ -50,11 +47,11 @@ export default function LoginPage() {
 
   // Redirect if already logged in
   useEffect(() => {
-    // TODO: check session with Supabase
-    // supabase.auth.getSession().then(({ data: { session } }) => {
-    //   if (session) router.push('/perfil')
-    // })
-  }, [])
+    const supabase = createClient()
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) router.push('/home')
+    })
+  }, [router])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -65,18 +62,13 @@ export default function LoginPage() {
 
     setLoading(true)
     try {
-      // TODO: Supabase sign in
-      // const { error } = await supabase.auth.signInWithPassword({ email, password })
-      // if (error) throw error
-      // router.push('/perfil')
-      // router.refresh()
-
-      // MOCK
-      await new Promise((r) => setTimeout(r, 1000))
+      const result = await signInAction({ email, password })
+      if (result?.error) throw new Error(result.error)
       router.push('/home')
-    } catch {
-      setGlobalError('Email o contraseña incorrectos')
-      // Shake animation
+      router.refresh()
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Email o contraseña incorrectos'
+      setGlobalError(msg)
       await controls.start({
         x: [0, -10, 10, -8, 8, -4, 4, 0],
         transition: { duration: 0.45 },
@@ -88,15 +80,20 @@ export default function LoginPage() {
 
   async function handleGoogle() {
     setOauthLoading(true)
+    setGlobalError('')
     try {
-      // TODO: Supabase OAuth
-      // const { error } = await supabase.auth.signInWithOAuth({
-      //   provider: 'google',
-      //   options: { redirectTo: `${window.location.origin}/auth/callback` },
-      // })
-      // if (error) throw error
-      await new Promise((r) => setTimeout(r, 800))
-    } finally {
+      const supabase = createClient()
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: `${window.location.origin}/auth/callback?next=/home` },
+      })
+      if (error) {
+        setGlobalError('No se pudo conectar con Google')
+        setOauthLoading(false)
+      }
+      // On success the browser is redirected to Google; no need to setLoading(false).
+    } catch {
+      setGlobalError('No se pudo conectar con Google')
       setOauthLoading(false)
     }
   }
@@ -109,18 +106,27 @@ export default function LoginPage() {
         className="hidden lg:flex flex-col items-center justify-center flex-1 relative overflow-hidden"
         style={{ background: '#5CA4A4' }}
       >
-        {/* Decorative stickers */}
+        {/* Decorative sticker badges with Lucide icons */}
         {DECO_STICKERS.map((s, i) => (
-          <motion.span
+          <motion.div
             key={i}
             initial={{ opacity: 0, scale: 0.5, rotate: s.rot }}
             animate={{ opacity: 1, scale: 1, rotate: s.rot }}
             transition={{ delay: 0.2 + i * 0.12, type: 'spring', stiffness: 200 }}
-            className="absolute select-none pointer-events-none"
-            style={{ top: s.top, left: (s as { left?: string }).left, right: (s as { right?: string }).right, bottom: s.bottom, fontSize: s.size }}
+            className="absolute select-none pointer-events-none float-slow"
+            style={{
+              top: (s as { top?: string }).top,
+              left: (s as { left?: string }).left,
+              right: (s as { right?: string }).right,
+              bottom: (s as { bottom?: string }).bottom,
+              ['--r' as string]: `${s.rot}deg`,
+              animationDelay: `${s.delay}s`,
+            } as React.CSSProperties}
           >
-            {s.emoji}
-          </motion.span>
+            <StickerBadge color={s.color} icon={s.icon} size="md" rotate={s.rot}>
+              {s.label}
+            </StickerBadge>
+          </motion.div>
         ))}
 
         {/* Mascot illustration */}
@@ -132,10 +138,11 @@ export default function LoginPage() {
           style={{ width: 260, height: 300 }}
         >
           <Image
-            src="/IMG_1447removebgpreview.png"
-            alt="Mascot with camera"
+            src="/character-female.png"
+            alt="Memento Mundi traveler"
             fill
-            className="object-contain drop-shadow-xl"
+            className="object-contain drop-shadow-[0_20px_25px_rgba(11,33,72,0.35)]"
+            priority
           />
         </motion.div>
 
@@ -164,7 +171,8 @@ export default function LoginPage() {
       </div>
 
       {/* ── RIGHT PANEL (form) ── */}
-      <div className="flex-1 flex flex-col items-center justify-center px-5 py-10 lg:max-w-lg lg:mx-auto">
+      <div className="flex-1 flex flex-col items-center justify-center px-5 py-10 lg:max-w-lg lg:mx-auto relative">
+        <div className="grain absolute inset-0 opacity-30 pointer-events-none" aria-hidden />
 
         {/* Logo — mobile/tablet only */}
         <div className="lg:hidden mb-8">
@@ -340,7 +348,7 @@ export default function LoginPage() {
           <p className="text-center font-grown text-navy mt-6" style={{ fontSize: 14, opacity: 0.55 }}>
             ¿Aún no tienes cuenta?{' '}
             <Link
-              href="/registro"
+              href="/signup"
               className="font-bold"
               style={{ color: '#FA9223', textDecoration: 'none', opacity: 1 }}
             >

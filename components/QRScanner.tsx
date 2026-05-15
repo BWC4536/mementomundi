@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { X } from 'lucide-react'
 import { isValidPackQR } from '@/schemas/trip.schema'
 
 interface QRScannerProps {
@@ -96,9 +97,10 @@ export function QRScanner({ onSuccess, onClose }: QRScannerProps) {
       {/* Close */}
       <button
         onClick={onClose}
-        className="absolute top-5 right-5 w-10 h-10 rounded-full bg-white bg-opacity-15 flex items-center justify-center text-white text-xl font-bold"
+        aria-label="Cerrar escáner"
+        className="absolute top-5 right-5 w-10 h-10 rounded-full bg-white/15 flex items-center justify-center text-white hover:bg-white/25 transition-colors cursor-pointer"
       >
-        ✕
+        <X size={20} strokeWidth={2.5} />
       </button>
 
       <p className="font-brasica font-black text-white mb-2" style={{ fontSize: 22 }}>

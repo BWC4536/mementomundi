@@ -1,14 +1,22 @@
 'use client'
 
 import { useRef, useState } from 'react'
+import { User, Heart, Users, Home, MapPin, ImagePlus } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import type { TripFormData } from '@/hooks/useNewTripFlow'
 import { validateTripForm, hasErrors } from '@/schemas/trip.schema'
 
-const TRIP_TYPES = [
-  { value: 'solo' as const,   label: 'Solo',    emoji: '🧍' },
-  { value: 'couple' as const, label: 'Pareja',  emoji: '👫' },
-  { value: 'group' as const,  label: 'Grupo',   emoji: '👥' },
-  { value: 'family' as const, label: 'Familia', emoji: '👨‍👩‍👧' },
+interface TripType {
+  value: 'solo' | 'couple' | 'group' | 'family'
+  label: string
+  icon: LucideIcon
+}
+
+const TRIP_TYPES: TripType[] = [
+  { value: 'solo',   label: 'Solo',    icon: User },
+  { value: 'couple', label: 'Pareja',  icon: Heart },
+  { value: 'group',  label: 'Grupo',   icon: Users },
+  { value: 'family', label: 'Familia', icon: Home },
 ]
 
 const DESTINATION_SUGGESTIONS = [
@@ -92,7 +100,7 @@ export function TripForm({ data, update, onNext, onBack }: TripFormProps) {
           type="text"
           value={data.tripName}
           onChange={(e) => { update({ tripName: e.target.value }); if (errors.tripName) setErrors(p => ({...p, tripName: undefined})) }}
-          placeholder="Ej: Grecia 2025 🏛️"
+          placeholder="Ej: Grecia 2025"
           maxLength={50}
           style={{ ...inputBase, border: `2px solid ${errors.tripName ? '#DC2626' : 'rgba(11,33,80,0.12)'}` }}
         />
@@ -151,11 +159,12 @@ export function TripForm({ data, update, onNext, onBack }: TripFormProps) {
             {filteredSuggestions.map((s) => (
               <li
                 key={s}
-                className="px-4 py-2.5 font-grown text-navy cursor-pointer hover:bg-cream"
+                className="px-4 py-2.5 font-grown text-navy cursor-pointer hover:bg-cream inline-flex items-center gap-2 w-full"
                 style={{ fontSize: 14 }}
                 onMouseDown={() => { update({ destination: s }); setDestFocus(false) }}
               >
-                📍 {s}
+                <MapPin size={14} strokeWidth={2.25} className="text-orange flex-shrink-0" />
+                {s}
               </li>
             ))}
           </ul>
@@ -170,12 +179,13 @@ export function TripForm({ data, update, onNext, onBack }: TripFormProps) {
         <div className="grid grid-cols-4 gap-2">
           {TRIP_TYPES.map((t) => {
             const active = data.tripType === t.value
+            const Icon = t.icon
             return (
               <button
                 key={t.value}
                 type="button"
                 onClick={() => update({ tripType: t.value })}
-                className="flex flex-col items-center gap-1 py-3 rounded-xl font-grown text-xs font-bold transition-all duration-200"
+                className="flex flex-col items-center gap-1.5 py-3 rounded-xl font-grown text-xs font-bold transition-all duration-200 cursor-pointer"
                 style={{
                   background: active ? '#FA9223' : 'white',
                   color: active ? 'white' : 'rgba(11,33,80,0.6)',
@@ -183,7 +193,7 @@ export function TripForm({ data, update, onNext, onBack }: TripFormProps) {
                   boxShadow: active ? '3px 3px 0 #0B2150' : 'none',
                 }}
               >
-                <span style={{ fontSize: 22 }}>{t.emoji}</span>
+                <Icon size={22} strokeWidth={2} aria-hidden />
                 {t.label}
               </button>
             )
@@ -210,8 +220,8 @@ export function TripForm({ data, update, onNext, onBack }: TripFormProps) {
             <img src={data.coverImagePreview} alt="preview" className="w-full h-full object-cover" />
           ) : (
             <div className="text-center">
-              <span style={{ fontSize: 32 }}>🖼️</span>
-              <p className="font-grown text-navy mt-1" style={{ fontSize: 13, opacity: 0.5 }}>
+              <ImagePlus size={32} strokeWidth={1.75} className="mx-auto text-navy/45" aria-hidden />
+              <p className="font-grown text-navy mt-1.5" style={{ fontSize: 13, opacity: 0.5 }}>
                 Toca para añadir foto
               </p>
             </div>

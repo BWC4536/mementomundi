@@ -2,18 +2,32 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import {
+  Package, Camera, BookOpen, CreditCard, Palette, MessageCircle,
+  Search, X, Play, ChevronLeft, ChevronRight, ArrowLeft, ArrowRight,
+  Mail, Smartphone, Plane, Globe, ShoppingBag, User, Sparkles,
+} from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import { Mascot } from '@/components/Mascot'
 
 // TODO: Replace with Supabase query from `faqs` table once client is set up
-// import { createClient } from '@/lib/supabase/client'
 
-const CATEGORIES = [
-  { id: 'pedidos',  title: 'Pedidos y envíos',    sub: 'Estado, plazos, devoluciones',   emoji: '📦', bg: '#FFE7CC', rot: -2.5 },
-  { id: 'qr',       title: 'Cómo funciona el QR',  sub: 'Escanear y vincular pegatinas',  emoji: '📷', bg: '#D6ECEC', rot: 1.8 },
-  { id: 'book',     title: 'Mi scrapbook',          sub: 'Crear, editar y compartir',      emoji: '📖', bg: '#FFE0DC', rot: -1.2 },
-  { id: 'cuenta',   title: 'Cuenta y pagos',        sub: 'Login, métodos, facturas',       emoji: '💳', bg: '#D6E4F5', rot: 2.3 },
-  { id: 'perso',    title: 'Personalización',       sub: 'Diseña tu pack a medida',        emoji: '🎨', bg: '#FFEFD9', rot: -2.0 },
-  { id: 'contacto', title: 'Contacto',              sub: 'Habla con nuestro equipo',       emoji: '💬', bg: '#E2F1F1', rot: 1.4 },
+interface Category {
+  id: string
+  title: string
+  sub: string
+  icon: LucideIcon
+  bg: string
+  rot: number
+}
+
+const CATEGORIES: Category[] = [
+  { id: 'pedidos',  title: 'Pedidos y envíos',     sub: 'Estado, plazos, devoluciones',   icon: Package,        bg: '#FFE7CC', rot: -2.5 },
+  { id: 'qr',       title: 'Cómo funciona el QR',  sub: 'Escanear y vincular pegatinas',  icon: Camera,         bg: '#D6ECEC', rot: 1.8 },
+  { id: 'book',     title: 'Mi scrapbook',         sub: 'Crear, editar y compartir',      icon: BookOpen,       bg: '#FFE0DC', rot: -1.2 },
+  { id: 'cuenta',   title: 'Cuenta y pagos',       sub: 'Login, métodos, facturas',       icon: CreditCard,     bg: '#D6E4F5', rot: 2.3 },
+  { id: 'perso',    title: 'Personalización',      sub: 'Diseña tu pack a medida',        icon: Palette,        bg: '#FFEFD9', rot: -2.0 },
+  { id: 'contacto', title: 'Contacto',             sub: 'Habla con nuestro equipo',       icon: MessageCircle,  bg: '#E2F1F1', rot: 1.4 },
 ]
 
 const FAQS = [
@@ -134,7 +148,7 @@ export default function AyudaPage() {
             className="flex items-center gap-2.5 bg-white"
             style={{ border: '3px solid #0B2150', borderRadius: 99, boxShadow: '5px 5px 0 #0B2150', padding: '14px 22px', transition: 'box-shadow .2s, transform .2s' }}
           >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0B2150" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="7" /><path d="M20 20 L16 16" /></svg>
+            <Search size={22} strokeWidth={2.6} color="#0B2150" aria-hidden />
             <input
               type="text"
               placeholder="Busca tu duda..."
@@ -142,14 +156,16 @@ export default function AyudaPage() {
               onChange={e => setSearch(e.target.value)}
               className="flex-1 min-w-0 bg-transparent text-navy font-semibold"
               style={{ border: 'none', outline: 'none', fontFamily: 'Nunito, sans-serif', fontSize: 17 }}
+              aria-label="Buscar pregunta"
             />
             {search && (
               <button
                 onClick={() => setSearch('')}
+                aria-label="Limpiar búsqueda"
                 className="w-6 h-6 rounded-full flex items-center justify-center text-cream flex-shrink-0"
-                style={{ background: '#0B2150', border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 800 }}
+                style={{ background: '#0B2150', border: 'none', cursor: 'pointer' }}
               >
-                ✕
+                <X size={13} strokeWidth={3} />
               </button>
             )}
           </div>
@@ -196,32 +212,35 @@ export default function AyudaPage() {
             <div id="sec-cats" className="mb-12">
               <SectionLabel idx="01" label="Categorías rápidas" sub="Elige el tema y vamos directos al grano" />
               <div className="mt-5 grid gap-4.5" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
-                {CATEGORIES.map(cat => (
-                  <div
-                    key={cat.id}
-                    className="flex items-center gap-3.5 cursor-pointer"
-                    style={{
-                      background: cat.bg,
-                      border: '2.5px solid #0B2150',
-                      borderRadius: 18,
-                      boxShadow: '4px 4px 0 #0B2150',
-                      padding: '18px',
-                      transform: `rotate(${cat.rot}deg)`,
-                      transition: 'transform .25s, box-shadow .2s',
-                    }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'rotate(0deg)'; (e.currentTarget as HTMLElement).style.boxShadow = '6px 6px 0 #0B2150' }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = `rotate(${cat.rot}deg)`; (e.currentTarget as HTMLElement).style.boxShadow = '4px 4px 0 #0B2150' }}
-                  >
-                    <div className="w-16 h-16 rounded-xl bg-white border-[2.5px] border-navy flex items-center justify-center flex-shrink-0 text-3xl">
-                      {cat.emoji}
+                {CATEGORIES.map(cat => {
+                  const Icon = cat.icon
+                  return (
+                    <div
+                      key={cat.id}
+                      className="flex items-center gap-3.5 cursor-pointer"
+                      style={{
+                        background: cat.bg,
+                        border: '2.5px solid #0B2150',
+                        borderRadius: 18,
+                        boxShadow: '4px 4px 0 #0B2150',
+                        padding: '18px',
+                        transform: `rotate(${cat.rot}deg)`,
+                        transition: 'transform .25s, box-shadow .2s',
+                      }}
+                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'rotate(0deg)'; (e.currentTarget as HTMLElement).style.boxShadow = '6px 6px 0 #0B2150' }}
+                      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = `rotate(${cat.rot}deg)`; (e.currentTarget as HTMLElement).style.boxShadow = '4px 4px 0 #0B2150' }}
+                    >
+                      <div className="w-16 h-16 rounded-xl bg-white border-[2.5px] border-navy flex items-center justify-center flex-shrink-0">
+                        <Icon size={30} strokeWidth={2} color="#0B2150" aria-hidden />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-display font-black text-navy" style={{ fontSize: 17, lineHeight: 1.15, marginBottom: 3 }}>{cat.title}</p>
+                        <p className="text-navy opacity-65 font-semibold font-grown" style={{ fontSize: 12 }}>{cat.sub}</p>
+                      </div>
+                      <ArrowRight size={18} strokeWidth={2.5} className="text-navy/55 flex-shrink-0" aria-hidden />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-brasica font-black text-navy" style={{ fontSize: 17, lineHeight: 1.15, marginBottom: 3 }}>{cat.title}</p>
-                      <p className="text-navy opacity-65 font-semibold" style={{ fontSize: 12 }}>{cat.sub}</p>
-                    </div>
-                    <span className="text-navy opacity-55 font-bold pr-1" style={{ fontSize: 18 }}>→</span>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             </div>
 
@@ -289,16 +308,22 @@ export default function AyudaPage() {
                 sub="Cápsulas de 1 minuto"
                 rightAction={
                   <div className="flex gap-1.5">
-                    {['‹', '›'].map((arrow, i) => (
-                      <button
-                        key={i}
-                        onClick={() => scrollVid(i === 0 ? -1 : 1)}
-                        className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-navy bg-white border-2 border-navy icon-btn"
-                        style={{ cursor: 'pointer', fontSize: 16 }}
-                      >
-                        {arrow}
-                      </button>
-                    ))}
+                    <button
+                      onClick={() => scrollVid(-1)}
+                      aria-label="Vídeo anterior"
+                      className="w-9 h-9 rounded-full flex items-center justify-center text-navy bg-white border-2 border-navy hover:bg-navy/5 transition-colors"
+                      style={{ cursor: 'pointer' }}
+                    >
+                      <ChevronLeft size={18} strokeWidth={2.5} />
+                    </button>
+                    <button
+                      onClick={() => scrollVid(1)}
+                      aria-label="Vídeo siguiente"
+                      className="w-9 h-9 rounded-full flex items-center justify-center text-navy bg-white border-2 border-navy hover:bg-navy/5 transition-colors"
+                      style={{ cursor: 'pointer' }}
+                    >
+                      <ChevronRight size={18} strokeWidth={2.5} />
+                    </button>
                   </div>
                 }
               />
@@ -334,8 +359,8 @@ export default function AyudaPage() {
                     <div className="absolute top-2.5 right-2.5 rounded-lg text-white font-bold" style={{ background: 'rgba(11,33,80,0.7)', padding: '2px 7px', fontSize: 10, letterSpacing: '0.04em' }}>{v.duration}</div>
                     <div className="absolute font-brasica text-white font-bold" style={{ left: 12, right: 12, bottom: 44, fontSize: 15, lineHeight: 1.2, textShadow: '0 2px 8px rgba(0,0,0,0.5)' }}>{v.title}</div>
                     <div className="absolute left-3 bottom-3 flex items-center gap-1.5 rounded-full" style={{ background: 'rgba(11,33,80,0.85)', padding: '6px 11px 6px 9px', backdropFilter: 'blur(6px)' }}>
-                      <svg width="11" height="11" viewBox="0 0 16 16" fill="#EAE7DA"><path d="M3 2 L13 8 L3 14 Z" /></svg>
-                      <span className="text-cream font-bold" style={{ fontSize: 11 }}>VER</span>
+                      <Play size={11} strokeWidth={0} fill="#EAE7DA" color="#EAE7DA" aria-hidden />
+                      <span className="text-cream font-grown font-bold" style={{ fontSize: 11 }}>VER</span>
                     </div>
                   </div>
                 ))}
@@ -362,23 +387,28 @@ export default function AyudaPage() {
                 </div>
 
                 <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))' }}>
-                  {[
-                    { bg: '#D6ECEC', emoji: '💬', label: 'Chat en vivo', sub: 'Respuesta ~2 min' },
-                    { bg: '#FFE0DC', emoji: '✉️', label: 'Email',        sub: 'Respuesta ~2 h' },
-                    { bg: '#FFE7CC', emoji: '📱', label: 'WhatsApp',     sub: 'L–V de 9 a 19h' },
-                  ].map((c, i) => (
-                    <div
-                      key={i}
-                      className="flex flex-col items-center gap-2.5 text-center cursor-pointer"
-                      style={{ background: c.bg, border: '2.5px solid #0B2150', borderRadius: 16, padding: '22px 16px', boxShadow: '3px 3px 0 #0B2150', transition: 'transform .15s, box-shadow .2s' }}
-                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translate(-1px,-1px)'; (e.currentTarget as HTMLElement).style.boxShadow = '5px 5px 0 #0B2150' }}
-                      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = 'none'; (e.currentTarget as HTMLElement).style.boxShadow = '3px 3px 0 #0B2150' }}
-                    >
-                      <div className="w-16 h-16 rounded-full flex items-center justify-center text-3xl border-2 border-navy" style={{ background: 'rgba(255,255,255,0.45)' }}>{c.emoji}</div>
-                      <p className="font-brasica font-bold text-navy" style={{ fontSize: 15 }}>{c.label}</p>
-                      <p className="text-navy opacity-60 font-bold" style={{ fontSize: 11 }}>{c.sub}</p>
-                    </div>
-                  ))}
+                  {([
+                    { bg: '#D6ECEC', icon: MessageCircle, label: 'Chat en vivo', sub: 'Respuesta ~2 min' },
+                    { bg: '#FFE0DC', icon: Mail,          label: 'Email',        sub: 'Respuesta ~2 h' },
+                    { bg: '#FFE7CC', icon: Smartphone,    label: 'WhatsApp',     sub: 'L–V de 9 a 19h' },
+                  ] as const).map((c, i) => {
+                    const Icon = c.icon
+                    return (
+                      <div
+                        key={i}
+                        className="flex flex-col items-center gap-2.5 text-center cursor-pointer"
+                        style={{ background: c.bg, border: '2.5px solid #0B2150', borderRadius: 16, padding: '22px 16px', boxShadow: '3px 3px 0 #0B2150', transition: 'transform .15s, box-shadow .2s' }}
+                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translate(-1px,-1px)'; (e.currentTarget as HTMLElement).style.boxShadow = '5px 5px 0 #0B2150' }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = 'none'; (e.currentTarget as HTMLElement).style.boxShadow = '3px 3px 0 #0B2150' }}
+                      >
+                        <div className="w-16 h-16 rounded-full flex items-center justify-center border-2 border-navy" style={{ background: 'rgba(255,255,255,0.55)' }}>
+                          <Icon size={28} strokeWidth={2} color="#0B2150" aria-hidden />
+                        </div>
+                        <p className="font-display font-bold text-navy" style={{ fontSize: 15 }}>{c.label}</p>
+                        <p className="text-navy/60 font-grown font-bold" style={{ fontSize: 11 }}>{c.sub}</p>
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
             </div>
@@ -407,23 +437,33 @@ export default function AyudaPage() {
                   <p className="text-xs text-navy opacity-40">@anaviajera</p>
                 </div>
               </div>
-              <button onClick={() => setDrawerOpen(false)} className="w-8 h-8 rounded-full flex items-center justify-center text-navy" style={{ background: '#0B215015', border: 'none', cursor: 'pointer', fontSize: 15 }}>✕</button>
+              <button
+                onClick={() => setDrawerOpen(false)}
+                aria-label="Cerrar menú"
+                className="w-8 h-8 rounded-full flex items-center justify-center text-navy"
+                style={{ background: '#0B215015', border: 'none', cursor: 'pointer' }}
+              >
+                <X size={15} strokeWidth={2.5} />
+              </button>
             </div>
             <nav className="flex-1 overflow-y-auto py-2.5">
-              {[
-                { label: 'Viajes',   icon: '✈️', href: '/home' },
-                { label: 'RRSS',    icon: '🌍', href: '/rrss' },
-                { label: 'Tienda',  icon: '🛒', href: '/tienda' },
-                { label: 'Usuario', icon: '👤', href: '/perfil' },
-                { label: 'Sobre Nosotros', icon: '💛', href: '/sobre-nosotros' },
-              ].map((item, i) => (
-                <Link key={i} href={item.href} style={{ textDecoration: 'none' }}>
-                  <div className="nav-item flex items-center gap-3.5" style={{ padding: '14px 22px', borderLeft: '4px solid transparent' }}>
-                    <span style={{ fontSize: 20 }}>{item.icon}</span>
-                    <span style={{ fontWeight: 700, fontSize: 17, color: '#0B2150', opacity: 0.7, flex: 1 }}>{item.label}</span>
-                  </div>
-                </Link>
-              ))}
+              {([
+                { label: 'Viajes',         icon: Plane,        href: '/home' },
+                { label: 'RRSS',           icon: Globe,        href: '/rrss' },
+                { label: 'Tienda',         icon: ShoppingBag,  href: '/tienda' },
+                { label: 'Usuario',        icon: User,         href: '/perfil' },
+                { label: 'Sobre Nosotros', icon: Sparkles,     href: '/sobre-nosotros' },
+              ] as const).map((item, i) => {
+                const Icon = item.icon
+                return (
+                  <Link key={i} href={item.href} style={{ textDecoration: 'none' }}>
+                    <div className="flex items-center gap-3.5 transition-colors" style={{ padding: '14px 22px', borderLeft: '4px solid transparent', cursor: 'pointer' }}>
+                      <Icon size={20} strokeWidth={2} color="#0B2150" style={{ opacity: 0.7 }} />
+                      <span className="font-grown" style={{ fontWeight: 700, fontSize: 16, color: '#0B2150', opacity: 0.7, flex: 1 }}>{item.label}</span>
+                    </div>
+                  </Link>
+                )
+              })}
               <div style={{ margin: '8px 22px', height: 1.5, background: 'rgba(11,33,80,0.08)' }} />
               {/* Ayuda active */}
               <div className="flex items-center gap-3.5" style={{ padding: '14px 22px', background: 'rgba(11,33,80,0.07)', borderLeft: '4px solid #FA9223' }}>
@@ -434,8 +474,9 @@ export default function AyudaPage() {
             </nav>
             <div style={{ padding: '16px 22px 22px', borderTop: '2px solid rgba(11,33,80,0.07)' }}>
               <Link href="/home" style={{ textDecoration: 'none' }}>
-                <button className="btn-primary w-full bg-orange text-white rounded-full font-bold flex items-center justify-center gap-2" style={{ padding: '15px 22px', fontSize: 15, border: 'none', cursor: 'pointer', boxShadow: '3px 3px 0px #0B2150', fontFamily: 'Nunito, sans-serif' }}>
-                  ← Volver a Viajes
+                <button className="w-full bg-orange text-white rounded-full font-grown font-bold flex items-center justify-center gap-2 transition hover:translate-y-0.5" style={{ padding: '15px 22px', fontSize: 15, border: 'none', cursor: 'pointer', boxShadow: '3px 3px 0px #0B2150' }}>
+                  <ArrowLeft size={16} strokeWidth={2.5} />
+                  Volver a Viajes
                 </button>
               </Link>
             </div>

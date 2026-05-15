@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Camera, CheckCircle2, ArrowLeft } from 'lucide-react'
 import { Mascot } from '@/components/Mascot'
 import { StepIndicator } from '@/components/StepIndicator'
 import { QRScanner } from '@/components/QRScanner'
@@ -113,11 +114,17 @@ export default function NuevoViajePage() {
         className="sticky top-0 z-20 flex items-center justify-between px-4 py-3 bg-cream"
         style={{ borderBottom: '1px solid rgba(11,33,80,0.08)' }}
       >
-        <Link href="/home" className="font-grown font-bold text-navy text-opacity-50 text-sm hover:text-opacity-80">
-          ← Cancelar
+        <Link
+          href="/home"
+          className="inline-flex items-center gap-1.5 font-grown font-bold text-navy/55 text-sm
+                     hover:text-navy transition-colors"
+        >
+          <ArrowLeft size={14} strokeWidth={2.5} />
+          Cancelar
         </Link>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/MEMENTO_FRASE.svg" alt="Memento Mundi" className="h-8 object-contain" />
-        <div className="w-16" />
+        <div className="w-20" />
       </div>
 
       {/* Main card */}
@@ -151,15 +158,13 @@ export default function NuevoViajePage() {
                 {/* Main CTA */}
                 <button
                   onClick={() => setScannerOpen(true)}
-                  className="relative inline-flex items-center gap-3 px-7 py-4 rounded-full font-brasica font-black text-white overflow-visible"
-                  style={{
-                    background: '#FA9223',
-                    border: '2.5px solid #0B2150',
-                    boxShadow: '5px 5px 0 #0B2150',
-                    fontSize: 18,
-                  }}
+                  className="relative inline-flex items-center gap-3 px-7 py-4 rounded-full
+                             bg-orange text-navy font-display font-black text-lg
+                             border-2 border-navy
+                             shadow-[5px_5px_0_#0B2150]
+                             transition hover:translate-y-0.5 hover:shadow-[3px_3px_0_#0B2150]"
                 >
-                  <span style={{ fontSize: 22 }}>📷</span>
+                  <Camera size={22} strokeWidth={2.5} />
                   Abrir cámara
                   {/* Peel corner */}
                   <span
@@ -169,19 +174,23 @@ export default function NuevoViajePage() {
                       borderWidth: '0 0 14px 14px',
                       borderColor: 'transparent transparent rgba(11,33,80,0.25) transparent',
                     }}
+                    aria-hidden
                   />
                 </button>
 
                 {/* Already confirmed QR display */}
                 {flow.data.qrCode && (
                   <div
-                    className="mt-5 mx-auto max-w-xs px-4 py-3 rounded-xl flex items-center gap-2"
-                    style={{ background: '#D6ECEC', border: '1.5px solid #5CA4A4' }}
+                    className="mt-5 mx-auto max-w-xs px-4 py-3 rounded-2xl
+                               flex items-center gap-2.5
+                               border-2 border-teal-light
+                               shadow-[4px_4px_0_#0B2130]"
+                    style={{ background: '#D6ECEC' }}
                   >
-                    <span style={{ fontSize: 20 }}>✅</span>
-                    <div className="text-left">
-                      <p className="font-grown font-bold text-navy" style={{ fontSize: 13 }}>QR escaneado</p>
-                      <p className="font-grown text-navy" style={{ fontSize: 11, opacity: 0.55 }}>
+                    <CheckCircle2 size={22} strokeWidth={2.25} color="#066F84" />
+                    <div className="text-left flex-1">
+                      <p className="font-grown font-bold text-navy text-sm">QR escaneado</p>
+                      <p className="font-grown text-navy/55 text-[11px] truncate">
                         {flow.data.qrCode.slice(0, 20)}…
                       </p>
                     </div>

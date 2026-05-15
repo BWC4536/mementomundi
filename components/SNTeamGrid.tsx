@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
+import { User } from 'lucide-react'
 import { teamMembers } from '@/lib/about-data'
 
 function TeamCard({ member }: { member: typeof teamMembers[0] }) {
@@ -35,7 +36,7 @@ function TeamCard({ member }: { member: typeof teamMembers[0] }) {
             <Image src={member.photo} alt={member.name} width={200} height={200} className="object-cover w-full h-full" />
           ) : (
             <div className="w-full h-full flex items-center justify-center" style={{ background: '#EAE7DA' }}>
-              <span style={{ fontSize: 64 }}>👤</span>
+              <User size={64} strokeWidth={1.5} color="#0B2150" aria-hidden />
             </div>
           )}
         </div>
