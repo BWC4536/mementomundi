@@ -24,18 +24,8 @@ export function HeroScrollVideo() {
   const rafRef = useRef<number | null>(null)
   const currentIndexRef = useRef(0)
   const targetIndexRef = useRef(0)
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
 
   const frameSrc = (i: number) => `/frames/frame_${String(i + 1).padStart(4, '0')}.webp`
-
-  // ─── Detect prefers-reduced-motion ────────────────────────────────────
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
-    setPrefersReducedMotion(mediaQuery.matches)
-    const handler = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches)
-    mediaQuery.addEventListener('change', handler)
-    return () => mediaQuery.removeEventListener('change', handler)
-  }, [])
 
   // ─── Preload frames en dos fases ───────────────────────────────────────
   useEffect(() => {
