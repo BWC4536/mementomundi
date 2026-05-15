@@ -70,3 +70,75 @@
   background-image: radial-gradient(circle, rgba(11, 33, 80, 0.1) 1px, transparent 1px);
   background-size: 20px 20px;
 }
+
+/* ─── Landing utilities (from index.tsx) ─────────────────────────────── */
+
+/* Grain texture */
+.grain {
+  background-image:
+    radial-gradient(rgba(11, 33, 48, 0.18) 1px, transparent 1px),
+    radial-gradient(rgba(11, 33, 48, 0.12) 1px, transparent 1px);
+  background-size: 3px 3px, 6px 6px;
+  background-position: 0 0, 1px 1px;
+  pointer-events: none;
+}
+
+/* Polaroid card */
+.polaroid {
+  background: #FAF7EE;
+  padding: 10px 10px 18px;
+  border-radius: 6px;
+  box-shadow:
+    0 1px 0 rgba(11, 33, 48, 0.15),
+    0 12px 24px rgba(11, 33, 48, 0.18),
+    inset 0 0 0 1px rgba(11, 33, 48, 0.06);
+  position: relative;
+  display: inline-block;
+}
+
+/* Tape decoration on top of polaroids */
+.tape {
+  position: absolute;
+  width: 64px;
+  height: 18px;
+  background: rgba(250, 146, 35, 0.35);
+  border-left: 1px dashed rgba(11, 33, 48, 0.2);
+  border-right: 1px dashed rgba(11, 33, 48, 0.2);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Sticker bouncy shadow */
+.sticker {
+  filter: drop-shadow(0 4px 0 rgba(11, 33, 48, 0.85)) drop-shadow(0 10px 18px rgba(11, 33, 48, 0.35));
+}
+
+/* Floating animation for decorations */
+@keyframes float-slow {
+  0%, 100% {
+    transform: rotate(var(--r, 0deg)) translateY(0);
+  }
+  50% {
+    transform: rotate(var(--r, 0deg)) translateY(-10px);
+  }
+}
+
+.float-slow {
+  animation: float-slow 6s ease-in-out infinite;
+}
+
+/* Marquee (infinite horizontal scroll) */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: marquee 30s linear infinite;
+  width: max-content;
+}

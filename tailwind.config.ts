@@ -11,13 +11,17 @@ const config: Config = {
         // MementoMundi brand palette
         cream: '#EAE7DA',
         pink: '#FFB4AD',
+        coral: '#FFB4AD',
         orange: '#FA9223',
         teal: '#5CA4A4',
-        'teal-dark': '#066FB4',
-        navy: '#0B2150',
+        'teal-light': '#5CA4A4',
+        'teal-dark': '#066F84',
+        navy: '#0B2130',
+        card: '#F5F1E4',
       },
       fontFamily: {
         brasica: ['Playfair Display', 'serif'],
+        display: ['Playfair Display', 'serif'],
         grown: ['Nunito', 'sans-serif'],
       },
       backgroundImage: {
