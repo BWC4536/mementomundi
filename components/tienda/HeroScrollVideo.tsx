@@ -1,10 +1,6 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-
-gsap.registerPlugin(ScrollTrigger)
 
 const TOTAL_FRAMES = 90
 const FRAME_SPEED = 1.0
@@ -158,28 +154,42 @@ export function HeroScrollVideo() {
     drawFrame(0)
     rafRef.current = requestAnimationFrame(tick)
 
-    // ScrollTrigger sin scrub directo (manejamos el lerp manualmente)
-    const scrollHeight = window.innerWidth < 768 ? '700%' : '1000%'
+    // Scroll handler for frame animation
+    const scrollHeight = window.innerWidth < 768 ? 7 : 11 // multiplier of viewport height
 
-    const trigger = ScrollTrigger.create({
-      trigger: container,
-      start: 'top top',
-      end: `+=${scrollHeight}`,
-      pin: false,
-      onUpdate: (self) => {
-        const accel = Math.min(self.progress * FRAME_SPEED, 1)
-        targetIndexRef.current = accel * (TOTAL_FRAMES - 1)
-      },
-    })
+    const handleScroll = () => {
+      const scrollY = window.scrollY
+      const containerTop = container.offsetTop
+      const viewportHeight = window.innerHeight
+      const totalHeight = scrollHeight * viewportHeight
+
+      const scrollStart = Math.max(0, containerTop)
+      const scrollEnd = scrollStart + totalHeight
+      const currentScroll = scrollY + viewportHeight / 2
+
+      let progress = 0
+      if (currentScroll >= scrollStart && currentScroll <= scrollEnd) {
+        progress = (currentScroll - scrollStart) / (scrollEnd - scrollStart)
+      } else if (currentScroll < scrollStart) {
+        progress = 0
+      } else {
+        progress = 1
+      }
+
+      const accel = Math.min(progress * FRAME_SPEED, 1)
+      targetIndexRef.current = accel * (TOTAL_FRAMES - 1)
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
 
     return () => {
       window.removeEventListener('resize', updateCanvasSize)
+      window.removeEventListener('scroll', handleScroll)
       if (rafRef.current) cancelAnimationFrame(rafRef.current)
-      trigger.kill()
     }
   }, [loadingPhase])
 
-  // ─── Textos overlay con ScrollTrigger ─────────────────────────────────
+  // ─── Textos overlay con scroll handler ────────────────────────────────
   useEffect(() => {
     if (loadingPhase !== 'done' || !containerRef.current) return
 
@@ -190,41 +200,56 @@ export function HeroScrollVideo() {
       { selector: '[data-text="2"]', start: 0.65, end: 0.88 },
     ]
 
-    const triggers: ScrollTrigger[] = []
+    const elements = texts.map(({ selector, start, end }) => ({
+      el: container.querySelector(selector) as HTMLElement | null,
+      start,
+      end,
+    }))
 
-    texts.forEach(({ selector, start, end }) => {
-      const el = container.querySelector(selector) as HTMLElement | null
-      if (!el) return
+    const scrollHeight = window.innerWidth < 768 ? 7 : 11
+    const viewportHeight = window.innerHeight
 
-      const t = ScrollTrigger.create({
-        trigger: container,
-        start: 'top top',
-        end: `+=${window.innerWidth < 768 ? 700 : 1000}%`,
-        onUpdate: (self) => {
-          const p = self.progress
-          if (p < start || p > end) {
-            el.style.opacity = '0'
-            el.style.filter = 'blur(12px)'
-            el.style.transform = 'translateY(20px)'
-            return
-          }
-          const window_ = end - start
-          const local = (p - start) / window_
-          const fadeIn = Math.min(local / 0.2, 1)
-          const fadeOut = local > 0.8 ? Math.max(0, 1 - (local - 0.8) / 0.2) : 1
-          const opacity = fadeIn * fadeOut
-          const blur = 12 * (1 - opacity)
-          const y = 20 * (1 - opacity)
-          el.style.opacity = opacity.toString()
-          el.style.filter = `blur(${blur}px)`
-          el.style.transform = `translateY(${y}px)`
-        },
+    const updateTexts = () => {
+      const scrollTop = window.scrollY
+      const containerTop = container.offsetTop
+      const totalHeight = scrollHeight * viewportHeight
+      const scrollStart = Math.max(0, containerTop)
+      const scrollEnd = scrollStart + totalHeight
+      const currentScroll = scrollTop + viewportHeight / 2
+
+      let progress = 0
+      if (currentScroll >= scrollStart && currentScroll <= scrollEnd) {
+        progress = (currentScroll - scrollStart) / (scrollEnd - scrollStart)
+      } else if (currentScroll > scrollEnd) {
+        progress = 1
+      }
+
+      elements.forEach(({ el, start, end }) => {
+        if (!el) return
+        if (progress < start || progress > end) {
+          el.style.opacity = '0'
+          el.style.filter = 'blur(12px)'
+          el.style.transform = 'translateY(20px)'
+          return
+        }
+        const window_ = end - start
+        const local = (progress - start) / window_
+        const fadeIn = Math.min(local / 0.2, 1)
+        const fadeOut = local > 0.8 ? Math.max(0, 1 - (local - 0.8) / 0.2) : 1
+        const opacity = fadeIn * fadeOut
+        const blur = 12 * (1 - opacity)
+        const y = 20 * (1 - opacity)
+        el.style.opacity = opacity.toString()
+        el.style.filter = `blur(${blur}px)`
+        el.style.transform = `translateY(${y}px)`
       })
-      triggers.push(t)
-    })
+    }
+
+    window.addEventListener('scroll', updateTexts, { passive: true })
+    updateTexts()
 
     return () => {
-      triggers.forEach((t) => t.kill())
+      window.removeEventListener('scroll', updateTexts)
     }
   }, [loadingPhase])
 
