@@ -88,18 +88,25 @@ export function HeroScrollVideo() {
 
     const container = containerRef.current
 
+    // Snapshot of viewport height to avoid jumps when mobile URL bar shows/hides
+    let stableViewportHeight = window.innerHeight
+    let stableViewportWidth = window.innerWidth
+
     const updateCanvasSize = () => {
+      stableViewportHeight = window.innerHeight
+      stableViewportWidth = window.innerWidth
       const dpr = window.devicePixelRatio || 1
-      canvas.width = window.innerWidth * dpr
-      canvas.height = window.innerHeight * dpr
-      canvas.style.width = `${window.innerWidth}px`
-      canvas.style.height = `${window.innerHeight}px`
+      canvas.width = stableViewportWidth * dpr
+      canvas.height = stableViewportHeight * dpr
+      canvas.style.width = `${stableViewportWidth}px`
+      canvas.style.height = `${stableViewportHeight}px`
       ctx.setTransform(1, 0, 0, 1, 0, 0)
       ctx.scale(dpr, dpr)
     }
 
     updateCanvasSize()
     window.addEventListener('resize', updateCanvasSize)
+    window.addEventListener('orientationchange', updateCanvasSize)
 
     const drawFrame = (frameIndex: number) => {
       const frames = framesRef.current
@@ -108,8 +115,8 @@ export function HeroScrollVideo() {
       if (!frame?.img) return
 
       const img = frame.img
-      const cWidth = window.innerWidth
-      const cHeight = window.innerHeight
+      const cWidth = stableViewportWidth
+      const cHeight = stableViewportHeight
 
       // FULL COVER mode: cubrir toda la pantalla, recortando si es necesario
       const imgRatio = img.width / img.height
@@ -154,14 +161,15 @@ export function HeroScrollVideo() {
     drawFrame(0)
     rafRef.current = requestAnimationFrame(tick)
 
-    // Scroll handler for frame animation
-    const scrollHeight = window.innerWidth < 768 ? 7 : 11 // multiplier of viewport height
+    // Scroll handler for frame animation — el multiplicador debe coincidir con la altura CSS
+    // CSS desktop: 700vh → multiplicador 6, CSS mobile: 350vh → multiplicador 2.5
+    const getScrollMultiplier = () => (window.innerWidth < 768 ? 2.5 : 6)
 
     const handleScroll = () => {
       const scrollY = window.scrollY
       const containerTop = container.offsetTop
-      const viewportHeight = window.innerHeight
-      const totalHeight = scrollHeight * viewportHeight
+      const viewportHeight = stableViewportHeight
+      const totalHeight = getScrollMultiplier() * viewportHeight
 
       const scrollStart = Math.max(0, containerTop)
       const scrollEnd = scrollStart + totalHeight
@@ -181,9 +189,11 @@ export function HeroScrollVideo() {
     }
 
     window.addEventListener('scroll', handleScroll, { passive: true })
+    handleScroll()
 
     return () => {
       window.removeEventListener('resize', updateCanvasSize)
+      window.removeEventListener('orientationchange', updateCanvasSize)
       window.removeEventListener('scroll', handleScroll)
       if (rafRef.current) cancelAnimationFrame(rafRef.current)
     }
@@ -206,16 +216,22 @@ export function HeroScrollVideo() {
       end,
     }))
 
-    const scrollHeight = window.innerWidth < 768 ? 7 : 11
-    const viewportHeight = window.innerHeight
+    let stableViewportHeight = window.innerHeight
+    const onResize = () => {
+      stableViewportHeight = window.innerHeight
+    }
+    window.addEventListener('resize', onResize)
+    window.addEventListener('orientationchange', onResize)
+
+    const getScrollMultiplier = () => (window.innerWidth < 768 ? 2.5 : 6)
 
     const updateTexts = () => {
       const scrollTop = window.scrollY
       const containerTop = container.offsetTop
-      const totalHeight = scrollHeight * viewportHeight
+      const totalHeight = getScrollMultiplier() * stableViewportHeight
       const scrollStart = Math.max(0, containerTop)
       const scrollEnd = scrollStart + totalHeight
-      const currentScroll = scrollTop + viewportHeight / 2
+      const currentScroll = scrollTop + stableViewportHeight / 2
 
       let progress = 0
       if (currentScroll >= scrollStart && currentScroll <= scrollEnd) {
@@ -250,6 +266,8 @@ export function HeroScrollVideo() {
 
     return () => {
       window.removeEventListener('scroll', updateTexts)
+      window.removeEventListener('resize', onResize)
+      window.removeEventListener('orientationchange', onResize)
     }
   }, [loadingPhase])
 
@@ -265,7 +283,7 @@ export function HeroScrollVideo() {
     letterSpacing: '0.005em',
     textTransform: 'lowercase',
     lineHeight: 1.05,
-    fontSize: 'clamp(1.6rem, 4.8vw, 3.6rem)',
+    fontSize: 'clamp(1.25rem, 4.8vw, 3.6rem)',
     maxWidth: '90vw',
     pointerEvents: 'none',
     willChange: 'opacity, transform, filter',
@@ -282,11 +300,65 @@ export function HeroScrollVideo() {
     >
       <style>{`
         .memento-hero-scroll {
-          height: 1100vh;
+          height: 700vh;
+        }
+        .memento-hero-sticky {
+          position: sticky;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          height: 100dvh;
+          overflow: hidden;
+          z-index: 1;
+        }
+        .memento-hero-canvas {
+          display: block;
+          width: 100vw;
+          height: 100vh;
+          height: 100dvh;
+          position: absolute;
+          top: 0;
+          left: 0;
+        }
+        .memento-hero-text-top {
+          top: clamp(60px, 10vh, 140px);
+          right: clamp(20px, 6vw, 96px);
+          text-align: right;
+        }
+        .memento-hero-text-bl {
+          bottom: clamp(40px, 8vh, 80px);
+          left: clamp(20px, 6vw, 96px);
+        }
+        .memento-hero-text-br {
+          bottom: clamp(40px, 8vh, 80px);
+          right: clamp(20px, 6vw, 96px);
+          text-align: right;
         }
         @media (max-width: 767px) {
           .memento-hero-scroll {
-            height: 800vh;
+            height: 350vh;
+          }
+          .memento-hero-text-top {
+            top: clamp(48px, 10vh, 100px);
+            right: 0;
+            left: 0;
+            text-align: center;
+            padding: 0 24px;
+          }
+          .memento-hero-text-bl {
+            bottom: clamp(48px, 12vh, 100px);
+            right: 0;
+            left: 0;
+            text-align: center;
+            padding: 0 24px;
+          }
+          .memento-hero-text-br {
+            bottom: clamp(48px, 12vh, 100px);
+            right: 0;
+            left: 0;
+            text-align: center;
+            padding: 0 24px;
           }
         }
         @media (prefers-reduced-motion: reduce) {
@@ -296,28 +368,8 @@ export function HeroScrollVideo() {
         }
       `}</style>
       {/* Canvas fixed full viewport */}
-      <div
-        style={{
-          position: 'sticky',
-          top: 0,
-          left: 0,
-          width: '100vw',
-          height: '100vh',
-          overflow: 'hidden',
-          zIndex: 1,
-        }}
-      >
-        <canvas
-          ref={canvasRef}
-          style={{
-            display: 'block',
-            width: '100vw',
-            height: '100vh',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-          }}
-        />
+      <div className="memento-hero-sticky">
+        <canvas ref={canvasRef} className="memento-hero-canvas" />
 
         {/* Textos overlay — posicionados LEJOS del centro (donde está la pegatina) */}
         <div
@@ -328,40 +380,29 @@ export function HeroScrollVideo() {
             pointerEvents: 'none',
           }}
         >
-          {/* Texto 1: "memento para vivir" — bottom-left far corner */}
+          {/* Texto 1: "memento para vivir" */}
           <div
             data-text="0"
-            style={{
-              ...elegantTextStyle,
-              bottom: 'clamp(40px, 8vh, 80px)',
-              left: 'clamp(24px, 6vw, 96px)',
-            }}
+            className="memento-hero-text-bl"
+            style={elegantTextStyle}
           >
             memento para vivir
           </div>
 
-          {/* Texto 2: "memento para disfrutar" — top-right far corner */}
+          {/* Texto 2: "memento para disfrutar" */}
           <div
             data-text="1"
-            style={{
-              ...elegantTextStyle,
-              top: 'clamp(80px, 12vh, 140px)',
-              right: 'clamp(24px, 6vw, 96px)',
-              textAlign: 'right',
-            }}
+            className="memento-hero-text-top"
+            style={elegantTextStyle}
           >
             memento para disfrutar
           </div>
 
-          {/* Texto 3: "memento para recordar" — bottom-right far corner */}
+          {/* Texto 3: "memento para recordar" */}
           <div
             data-text="2"
-            style={{
-              ...elegantTextStyle,
-              bottom: 'clamp(40px, 8vh, 80px)',
-              right: 'clamp(24px, 6vw, 96px)',
-              textAlign: 'right',
-            }}
+            className="memento-hero-text-br"
+            style={elegantTextStyle}
           >
             memento para recordar
           </div>
