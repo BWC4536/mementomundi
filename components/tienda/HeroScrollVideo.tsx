@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 
-const TOTAL_FRAMES = 90
+const TOTAL_FRAMES = 80
 const FRAME_SPEED = 1.0
 const INITIAL_LOAD = 12
 
